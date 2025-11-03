@@ -39,6 +39,8 @@ update_status ModuleGame::Update()
 {
 
 	App->renderer->Draw(tablero, 0,0, 0, 0,0,0);
+	/*DrawCircle(40, 40, 10, RED);*/ // prueba de dibujo
+	App->physics->RenderDebug();
 
 	return UPDATE_CONTINUE;
 }
