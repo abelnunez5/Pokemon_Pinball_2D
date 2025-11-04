@@ -33,7 +33,6 @@ public:
     };
 
     int GetBodyCount() const { return world ? world->GetBodyCount() : 0; } // Cuantos cuerpos hay ? 
-
     Flipper CreateFlipper(float posPxX, float posPxY,
                           float lengthPx, float thicknessPx,
                           bool isRight);

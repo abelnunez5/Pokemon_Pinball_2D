@@ -30,6 +30,15 @@ bool ModulePlayer::Start() {
     TraceLog(LOG_INFO, "Right flipper: anchor=%p blade=%p joint=%p",
         (void*)rightFlipper.anchor, (void*)rightFlipper.blade, (void*)rightFlipper.joint);
 
+
+    //Bola
+    const float ballx = 100.0f;
+    const float bally = 10.0f;
+
+    physics->CreateCircleBody(ballx,bally,0.3f,true);
+
+
+
     return true;
 }
 
