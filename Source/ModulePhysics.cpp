@@ -123,7 +123,7 @@ void ModulePhysics::RenderDebug()
     int count = world->GetBodyCount();
     DrawText(TextFormat("Bodies: %d", count), 30, 30, 40, WHITE); 
 
-    DebugDrawWorld();
+    //DebugDrawWorld();
 }
 
 void ModulePhysics::DebugDrawWorld()
@@ -146,8 +146,52 @@ void ModulePhysics::DebugDrawWorld()
                     DrawLine((int)M2P(v1.x), (int)M2P(v1.y), (int)M2P(v2.x), (int)M2P(v2.y), GREEN);
                 }
             } break;
+            case b2Shape::e_chain: {
+                const b2ChainShape* chain = (const b2ChainShape*)f->GetShape();
+                for (int i = 0; i < chain->m_count - 1; ++i)
+                {
+                    b2Vec2 v1 = b2Mul(xf, chain->m_vertices[i]);
+                    b2Vec2 v2 = b2Mul(xf, chain->m_vertices[i + 1]);
+                    DrawLine((int)M2P(v1.x), (int)M2P(v1.y), (int)M2P(v2.x), (int)M2P(v2.y), GREEN);
+                }
+            } break;
+
             default: break;
             }
         }
     }
+}
+
+b2Body* ModulePhysics::CreateChain(int x, int y, int* coordinates, int vertex_count)
+{
+    if (!world) return nullptr;
+
+    b2Vec2* vertices = new b2Vec2[vertex_count];    // Array temp para guardar los vertices de la cadena en metros
+
+    for (int i = 0; i < vertex_count; i++)
+    {
+        float x_meters = P2M((float)coordinates[i * 2]);
+        float y_meters = P2M((float)coordinates[i * 2 + 1]);
+
+        vertices[i].Set(x_meters, y_meters);
+    }
+
+    b2BodyDef bd;
+    bd.type = b2_staticBody;
+    bd.position.Set(P2M((float)x), P2M((float)y));  // Pos si hubiera un offset
+    b2Body* body = world->CreateBody(&bd);
+
+    b2ChainShape shape;
+    shape.CreateChain(vertices, vertex_count, b2Vec2_zero, b2Vec2_zero);
+
+    b2FixtureDef fd;
+    fd.shape = &shape;
+    fd.density = 0.0f;
+    fd.friction = 0.5f; 
+    fd.restitution = 0.2f;
+    body->CreateFixture(&fd);
+
+    delete[] vertices;
+
+    return body;
 }

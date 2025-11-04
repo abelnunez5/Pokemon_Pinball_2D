@@ -64,6 +64,9 @@
     <ClInclude Include="Source\Timer.h">
       <Filter>Headers\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="Source\CollidersData.h">
+      <Filter>Headers\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Headers">

@@ -22,6 +22,8 @@ public:
     void SetDebug(bool enabled) { debug = enabled; }
     void RenderDebug();
 
+    b2Body* CreateChain(int x, int y, int* coordinates, int vertex_count); // Crear cadenas a partir de coords en pixeles
+
     public:
     struct Flipper {
         b2Body* anchor = nullptr;
