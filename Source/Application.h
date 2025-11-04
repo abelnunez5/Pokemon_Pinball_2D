@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Timer.h"
+#include "ModulePlayer.h"
 #include <vector>
 
 class Module;
@@ -9,6 +10,7 @@ class ModuleWindow;
 class ModuleRender;
 class ModuleAudio;
 class ModulePhysics;
+class Player;
 class ModuleGame;
 
 class Application
@@ -20,6 +22,7 @@ public:
 	ModuleAudio* audio;
 	ModulePhysics* physics;
 	ModuleGame* scene_intro;
+	ModulePlayer* player;
 
 private:
 

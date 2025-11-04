@@ -32,26 +32,13 @@ public:
         bool isRight = false;
     };
 
+    int GetBodyCount() const { return world ? world->GetBodyCount() : 0; } // Cuantos cuerpos hay ? 
+
     Flipper CreateFlipper(float posPxX, float posPxY,
                           float lengthPx, float thicknessPx,
                           bool isRight);
 
     void SetFlipperPressed(Flipper& f, bool pressed);
-
-    // === ⬇️ ESTE BLOQUE DEBE ESTAR AQUÍ, DENTRO DEL 'public:' ===
-    /*struct Flipper {
-        b2Body* anchor = nullptr;
-        b2Body* blade = nullptr;
-        b2RevoluteJoint* joint = nullptr;
-        bool isRight = false;
-    };
-
-    Flipper CreateFlipper(float posPxX, float posPxY,
-        float lengthPx, float thicknessPx,
-        bool isRight);
-
-    void SetFlipperPressed(Flipper& f, bool pressed);*/
-    // === ⬆️ FIN BLOQUE ===
 
 private:
     b2World* world = nullptr;

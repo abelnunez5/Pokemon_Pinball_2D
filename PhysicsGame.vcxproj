@@ -180,7 +180,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Source/Application.h" />
     <ClInclude Include="Source/Globals.h" />
     <ClInclude Include="Source/ModulePhysics.h" />
@@ -191,10 +190,10 @@
     <ClInclude Include="Source/p2Point.h" />
     <ClInclude Include="Source\CollidersData.h" />
     <ClInclude Include="Source\ModuleGame.h" />
+    <ClInclude Include="Source\ModulePlayer.h" />
     <ClInclude Include="Source\Timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Source/Application.cpp" />
     <ClCompile Include="Source/Log.cpp" />
     <ClCompile Include="Source/Main.cpp" />
@@ -203,6 +202,7 @@
     <ClCompile Include="Source/ModuleRender.cpp" />
     <ClCompile Include="Source/ModuleWindow.cpp" />
     <ClCompile Include="Source\ModuleGame.cpp" />
+    <ClCompile Include="Source\ModulePlayer.cpp" />
     <ClCompile Include="Source\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>

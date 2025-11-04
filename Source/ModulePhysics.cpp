@@ -14,13 +14,13 @@ ModulePhysics::~ModulePhysics() {}
 
 bool ModulePhysics::Start() // Crea el mundo de Box2D si aún no existe
 { 
-	TraceLog(LOG_INFO, "Creating Physics world");
+	TraceLog(LOG_INFO, "Creating Physics world"); //que nos diga si ha creado las fisicas 
 
    b2Vec2 gravity(0.0f, 9.8f);
    world = new b2World(gravity);
    accumulator = 0.0;
 
-   TraceLog(LOG_INFO, "Physics world created successfully",(void*)world);
+   TraceLog(LOG_INFO, "Physics world created successfully",(void*)world); // que nos diga cuando ha creado las fisicas 
 
    return true;
 }
@@ -42,7 +42,7 @@ update_status ModulePhysics::PostUpdate()
 {
     if (IsKeyPressed(KEY_F1)) 
         debug = !debug;
-	TraceLog(LOG_INFO, "Physics debug: %s", debug ? "ON" : "OFF");
+	TraceLog(LOG_INFO, "Physics debug: %s", debug ? "ON" : "OFF"); //que nos diga si estan encendidas o apagadas 
 
     if (debug && world) {
         DebugDrawWorld();
@@ -121,7 +121,7 @@ void ModulePhysics::RenderDebug()
 
     //Prueba para mostrar cuántos cuerpos hay en el mundo
     int count = world->GetBodyCount();
-    DrawText(TextFormat("Bodies: %d", count), 30, 30, 40, WHITE); 
+    DrawText(TextFormat("Bodies: %d", count), 30, 30, 40, BLACK); 
 
     //DebugDrawWorld();
 }

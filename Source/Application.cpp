@@ -15,6 +15,7 @@ Application::Application()
 	audio = new ModuleAudio(this, true);
 	physics = new ModulePhysics(this);
 	scene_intro = new ModuleGame(this);
+	player = new ModulePlayer(this, true);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -22,14 +23,16 @@ Application::Application()
 
 	// Main Modules
 	AddModule(window);
+	/*AddModule(player);*/
 	AddModule(physics);
 	AddModule(audio);
-	
+
 	// Scenes
 	AddModule(scene_intro);
 
 	// Rendering happens at the end
 	AddModule(renderer);
+	AddModule(player);
 }
 
 Application::~Application()
