@@ -3,6 +3,13 @@
 #include "raylib.h"
 #include <box2d/box2d.h>
 
+// Categorías de colisión
+enum CollisionCategory : uint16 {
+    CAT_TABLE = 0x0001, // paredes / tablero
+    CAT_BALL = 0x0002, // bola
+    CAT_FLIPPER = 0x0004, // palas del flipper
+};
+
 class ModulePhysics : public Module {
 public:
     ModulePhysics(Application* app, bool start_enabled = true);

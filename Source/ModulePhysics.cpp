@@ -87,6 +87,7 @@ ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY,
         b2CircleShape c;
         c.m_radius = P2M(2.0f); // círculo pequeño para visualizar el pivote
         b2FixtureDef fd; fd.shape = &c; fd.density = 0.0f;
+        fd.isSensor = true;
         f.anchor->CreateFixture(&fd);
     }
 
@@ -112,11 +113,14 @@ ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY,
         fd.density = 2.0f;
         fd.friction = 0.3f;
         fd.restitution = 0.0f;
+        fd.filter.categoryBits = CAT_FLIPPER;
+        fd.filter.maskBits = CAT_BALL;
         f.blade->CreateFixture(&fd);
     }
 
     // Anclamos el blade al anchor en el extremo apropiado
     b2RevoluteJointDef jd;
+	jd.collideConnected = false;    
     jd.bodyA = f.anchor;
     jd.bodyB = f.blade;
     jd.collideConnected = false;
@@ -161,6 +165,7 @@ ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY,
 void ModulePhysics::SetFlipperPressed(ModulePhysics::Flipper& f, bool pressed)
 {
     if (!f.joint) return;
+	if (f.blade) f.blade->SetAwake(true); // asegurar que el flipper está despierto
 
     // Velocidad del motor
     const float upSpeed = 20.0f;
@@ -190,6 +195,8 @@ b2Body* ModulePhysics::CreateCircleBody(float mx, float my, float mr, bool dynam
     b2Body* body = world->CreateBody(&bd);
     b2CircleShape sh; sh.m_radius = mr;
     b2FixtureDef fd; fd.shape = &sh; fd.density = dynamic ? 1.0f : 0.0f; fd.friction = 0.2f; fd.restitution = 0.5f;
+	fd.filter.categoryBits = CAT_BALL;
+	fd.filter.maskBits = CAT_TABLE | CAT_FLIPPER;
     body->CreateFixture(&fd);
     return body;
 }
@@ -203,6 +210,9 @@ b2Body* ModulePhysics::CreateBoxBody(float mx, float my, float mw, float mh, boo
     b2Body* body = world->CreateBody(&bd);
     b2PolygonShape sh; sh.SetAsBox(mw * 0.5f, mh * 0.5f);
     b2FixtureDef fd; fd.shape = &sh; fd.density = dynamic ? 1.0f : 0.0f; fd.friction = 0.5f; fd.restitution = dynamic ? 0.2f : 0.0f;
+	if (!dynamic) {fd.filter.categoryBits = CAT_TABLE;
+    fd.filter.maskBits = CAT_BALL;
+	}
     body->CreateFixture(&fd);
     return body;
 }
