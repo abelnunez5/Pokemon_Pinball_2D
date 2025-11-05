@@ -53,6 +53,9 @@ bool ModulePlayer::Start() {
     plungerTexture = LoadTexture("Assets/Plunger.png");
     plunger = physics->CreateBoxBody(plungerx, plungery, plungerw, plungerh, false, 0.0f);
 
+
+    ball->SetBullet(true);
+
     return true;
 }
 
