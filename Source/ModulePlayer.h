@@ -24,7 +24,9 @@ private:
     ModulePhysics::Flipper leftFlipper{};
     ModulePhysics::Flipper rightFlipper{};
 	b2Body* ball = nullptr;
+	b2Body* plunger = nullptr;
     Texture2D ballTexture{};
+    Texture2D plungerTexture{};
 
     enum class BallState {
         RECTA,

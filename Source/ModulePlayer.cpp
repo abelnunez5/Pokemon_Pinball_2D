@@ -44,6 +44,16 @@ bool ModulePlayer::Start() {
     ballTexture = LoadTexture("Assets/pokeball3.png");
     ball = physics->CreateCircleBody(ballx,bally,0.45f,true);
 
+    //Plunger
+    const float plungerx = 10.0f;
+    const float plungery = 12.0f;
+    const float plungerw = 1.0f;
+    const float plungerh = 12.0f;
+
+    plungerTexture = LoadTexture("Assets/Plunger.png");
+    plunger = physics->CreateBoxBody(plungerx, plungery, plungerw, plungerh, false, 0.0f);
+
+
     ball->SetBullet(true);
 
     return true;
@@ -205,13 +215,26 @@ void ModulePlayer::Draw(float dt) {
     default:                                    sourceRect = { 216.0f, 0.0f, 48.0f, 48.0f }; break;
     }
 
-    float x_pixeles = ModulePhysics::M2P(ball->GetPosition().x);
-    float y_pixeles = ModulePhysics::M2P(ball->GetPosition().y);
 
-    float draw_x = x_pixeles - (sourceRect.width / 2.0f);
-    float draw_y = y_pixeles - (sourceRect.height / 2.0f);
+    Rectangle sourceRect_p = { 0.0f, 0.0f, 8.0f, 46.0f };
 
-    App->renderer->Draw(ballTexture, draw_x, draw_y, &sourceRect, 0, 0, 0);
+    float x_pixeles_ball = ModulePhysics::M2P(ball->GetPosition().x);
+    float y_pixeles_ball = ModulePhysics::M2P(ball->GetPosition().y);
+
+    float draw_x_ball = x_pixeles_ball - (sourceRect.width / 2.0f);
+    float draw_y_ball = y_pixeles_ball - (sourceRect.height / 2.0f);
+
+    App->renderer->Draw(ballTexture, draw_x_ball, draw_y_ball, &sourceRect, 0, 0, 0);
+    App->physics->RenderDebug();
+
+
+    float x_pixeles_plunger = ModulePhysics::M2P(plunger->GetPosition().x);
+    float y_pixeles_plunger = ModulePhysics::M2P(plunger->GetPosition().y); 
+
+    float draw_x_plunger = x_pixeles_plunger - (sourceRect.width / 2.0f);
+    float draw_y_plunger = y_pixeles_plunger - (sourceRect.height / 2.0f);
+
+    App->renderer->Draw(plungerTexture, draw_x_plunger, draw_y_plunger, &sourceRect_p, 0, 0, 0);
     App->physics->RenderDebug();
 }
 
