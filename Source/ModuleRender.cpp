@@ -65,25 +65,28 @@ void ModuleRender::SetBackgroundColor(Color color)
 }
 
 // Draw to screen
-bool ModuleRender::Draw(Texture2D texture, int x, int y, const Rectangle* section, double angle, int pivot_x, int pivot_y) const
+bool ModuleRender::Draw(Texture2D texture, int x, int y, const Rectangle* section,
+    double angle, int pivot_x, int pivot_y,
+    float dest_w, float dest_h) const
 {
-	bool ret = true;
+    if (texture.id == 0) return false;
 
-	float scale = 1.0f;
-    Vector2 position = { (float)x, (float)y };
-    Rectangle rect = { 0.f, 0.f, (float)texture.width, (float)texture.height };
+    // Rect fuente
+    Rectangle src = { 0.f, 0.f, (float)texture.width, (float)texture.height };
+    if (section != NULL) src = *section;
 
-    if (section != NULL) rect = *section;
+    // Si no se pasan dimensiones destino, usa las del src
+    if (dest_w <= 0.0f) dest_w = src.width;
+    if (dest_h <= 0.0f) dest_h = src.height;
 
-    position.x = (float)(x-pivot_x) * scale + camera.x;
-    position.y = (float)(y-pivot_y) * scale + camera.y;
+    // Rect destino
+    Rectangle dst = { (float)x + camera.x, (float)y + camera.y, dest_w, dest_h };
 
-	rect.width *= scale;
-	rect.height *= scale;
+    // Pivote de rotación (coordenada local al dst)
+    Vector2 origin = { (float)pivot_x, (float)pivot_y };
 
-    DrawTextureRec(texture, rect, position, WHITE);
-
-	return ret;
+    DrawTexturePro(texture, src, dst, origin, (float)angle, WHITE);
+    return true;
 }
 
 bool ModuleRender::DrawText(const char * text, int x, int y, Font font, int spacing, Color tint) const

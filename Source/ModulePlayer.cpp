@@ -75,39 +75,39 @@ update_status ModulePlayer::Update() {
     physics->SetFlipperPressed(leftFlipper, L);
     physics->SetFlipperPressed(rightFlipper, R);
 
-	// Dibujado de sprites flippers
-    auto drawFlipper = [&](const ModulePhysics::Flipper& f, const Texture2D& tex)
+    // Dibujado de sprites flippers usando el renderer
+    auto drawFlipper = [&](const ModulePhysics::Flipper& f, const Texture2D& tex, bool isLeft)
         {
             if (!f.anchor || !f.blade || tex.id == 0) return;
 
-            // Posición del pivote en pantalla
             b2Vec2 ap = f.anchor->GetPosition();
             float ax = ModulePhysics::M2P(ap.x);
             float ay = ModulePhysics::M2P(ap.y);
-
-            // Ángulo actual de la pala (radianes → grados)
             float angDeg = f.blade->GetAngle() * (180.0f / 3.1415926f);
 
-            // Tamaño final en pantalla
-            float destW = flLenPx;   // longitud
-            float destH = flThPx;    // grosor
+            float destW = flLenPx;
+            float destH = flThPx;
 
-            // Rectángulos fuente/destino
+            float scaleX = destW / (float)tex.width;
+            float scaleY = destH / (float)tex.height;
+
+            float insetX_dest = (isLeft ? pivotInsetL_texX : pivotInsetR_texX) * scaleX;
+            float insetY_dest = (isLeft ? pivotInsetL_texY : pivotInsetR_texY) * scaleY;
+
+            int pivot_x = (int)(isLeft ? (destW - insetX_dest) : insetX_dest);
+            int pivot_y = (int)((destH * 0.5f) + insetY_dest);
+
+            int drawX = (int)(ax - pivot_x);
+            int drawY = (int)(ay - pivot_y);
+
             Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
-            Rectangle dst = { 0, 0, destW, destH };
-            Vector2 origin = { f.isRight ? 0.0f : destW, destH * 0.5f };
 
-			// Posición destino (origen en el pivote)
-            dst.x = ax - origin.x;
-            dst.y = ay - origin.y;
-
-            DrawTexturePro(tex, src, dst, origin, angDeg, WHITE);
+            App->renderer->Draw(tex, drawX, drawY, &src, angDeg, pivot_x, pivot_y, destW, destH);
         };
 
-    // Dibuja ambos
-    drawFlipper(leftFlipper, texFlipperL);
-    drawFlipper(rightFlipper, texFlipperR);
-
+    // Llamadas:
+    drawFlipper(leftFlipper, texFlipperL, /*isLeft=*/true);
+    drawFlipper(rightFlipper, texFlipperR, /*isLeft=*/false);
 
     const float MAX_SPEED_MS = 20.0f; // Velocidad maxima de la pelota
     const float MAX_SPEED_SQ = MAX_SPEED_MS * MAX_SPEED_MS;
@@ -374,6 +374,7 @@ void ModulePlayer::Draw(float dt) {
     default:                                    sourceRect = { 216.0f, 0.0f, 48.0f, 48.0f }; break;
     }
 
+    
     //rect plunger
     Rectangle sourceRect_p = { 0.0f, 0.0f, 56.0f, 322.0f };
 
