@@ -12,11 +12,18 @@ public:
     ModulePlayer(Application* app, bool start_enabled = true);
     ~ModulePlayer() override;
 
+	Texture2D texFlipperL = { 0 }; //textura flipper izquierdo
+	Texture2D texFlipperR = { 0 }; //textura flipper derecho
+
+	float flLenPx = 65.0f; //Largo de flipper
+	float flThPx = 18.0f;   //Grosor de flipper
+
     bool Start() override;
     update_status Update() override;
     void PlungerMovement(float dt);
     void UpdateBallAnimation(float dt);
     void Draw(float dt);
+	void DrawFlippers();
     bool CleanUp() override;
 
 private:
@@ -26,7 +33,7 @@ private:
     ModulePhysics::Flipper rightFlipper{};
 	b2Body* ball = nullptr;
 	b2Body* plunger = nullptr;
-    float originalPlungerY = 0.0f; //aqui
+    float originalPlungerY = 0.0f; 
     bool plungerIsShooting = false;  
     double shootStartTime = 0.0;     
     float shootDurationS = 0.0f;   

@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "ModuleRender.h"
+#include "raylib.h"
 
 
 
@@ -28,13 +29,16 @@ bool ModulePlayer::Start() {
     const float flLenPx = 65.0f;
     const float flThPx = 18.0f;
 
-    leftFlipper = physics->CreateFlipper(leftPivotPxX, leftPivotPxY, flLenPx, flThPx, true);
-    rightFlipper = physics->CreateFlipper(rightPivotPxX, rightPivotPxY, flLenPx, flThPx, false);
+	leftFlipper = physics->CreateFlipper(leftPivotPxX, leftPivotPxY, flLenPx, flThPx, true); // crea flipper izquierdo
+	rightFlipper = physics->CreateFlipper(rightPivotPxX, rightPivotPxY, flLenPx, flThPx, false); // crea flipper derecho
+
+	texFlipperL = LoadTexture("Assets/Palanca_Izda_24x9.png"); // carga textura flipper izquierdo
+	texFlipperR = LoadTexture("Assets/Palanca_Dcha_24x9.png"); // carga textura flipper derecho
 
     TraceLog(LOG_INFO, "Left flipper:  anchor=%p blade=%p joint=%p",
-        (void*)leftFlipper.anchor, (void*)leftFlipper.blade, (void*)leftFlipper.joint);
+		(void*)leftFlipper.anchor, (void*)leftFlipper.blade, (void*)leftFlipper.joint);  // que nos diga las posiciones de los flippers en consola
     TraceLog(LOG_INFO, "Right flipper: anchor=%p blade=%p joint=%p",
-        (void*)rightFlipper.anchor, (void*)rightFlipper.blade, (void*)rightFlipper.joint);
+		(void*)rightFlipper.anchor, (void*)rightFlipper.blade, (void*)rightFlipper.joint); // que nos diga las posiciones de los flippers en consola
 
 
     //Bola
@@ -70,6 +74,40 @@ update_status ModulePlayer::Update() {
 
     physics->SetFlipperPressed(leftFlipper, L);
     physics->SetFlipperPressed(rightFlipper, R);
+
+	// Dibujado de sprites flippers
+    auto drawFlipper = [&](const ModulePhysics::Flipper& f, const Texture2D& tex)
+        {
+            if (!f.anchor || !f.blade || tex.id == 0) return;
+
+            // Posición del pivote en pantalla
+            b2Vec2 ap = f.anchor->GetPosition();
+            float ax = ModulePhysics::M2P(ap.x);
+            float ay = ModulePhysics::M2P(ap.y);
+
+            // Ángulo actual de la pala (radianes → grados)
+            float angDeg = f.blade->GetAngle() * (180.0f / 3.1415926f);
+
+            // Tamaño final en pantalla
+            float destW = flLenPx;   // longitud
+            float destH = flThPx;    // grosor
+
+            // Rectángulos fuente/destino
+            Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
+            Rectangle dst = { 0, 0, destW, destH };
+            Vector2 origin = { f.isRight ? 0.0f : destW, destH * 0.5f };
+
+			// Posición destino (origen en el pivote)
+            dst.x = ax - origin.x;
+            dst.y = ay - origin.y;
+
+            DrawTexturePro(tex, src, dst, origin, angDeg, WHITE);
+        };
+
+    // Dibuja ambos
+    drawFlipper(leftFlipper, texFlipperL);
+    drawFlipper(rightFlipper, texFlipperR);
+
 
     const float MAX_SPEED_MS = 20.0f; // Velocidad maxima de la pelota
     const float MAX_SPEED_SQ = MAX_SPEED_MS * MAX_SPEED_MS;
@@ -359,7 +397,11 @@ void ModulePlayer::Draw(float dt) {
 }
 
 bool ModulePlayer::CleanUp() {
+
     UnloadTexture(ballTexture);
     UnloadTexture(plungerTexture);
+	UnloadTexture(texFlipperL);
+	UnloadTexture(texFlipperR);
+
     return true;
 }
