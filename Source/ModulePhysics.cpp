@@ -299,3 +299,33 @@ b2Body* ModulePhysics::CreateChain(int x, int y, int* coordinates, int vertex_co
 
     return body;
 }
+
+void ModulePhysics::CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px)
+{
+    if (!world) return;
+
+    float thickness_m = P2M(thickness_px);  //  Para pasar el grosor de pixeles a metros
+
+    for (int i = 0; i < vertex_count - 1; ++i)
+    {
+        float v1_x_px = (float)coordinates[i * 2] + x;  //  x del primer vewrtice en pixeles
+        float v1_y_px = (float)coordinates[i * 2 + 1] + y;  //  y del primer vertice en pixeles
+        float v2_x_px = (float)coordinates[(i + 1) * 2] + x;    //  x del segundo vertice en pixeles
+        float v2_y_px = (float)coordinates[(i + 1) * 2 + 1] + y;    //  y del primer vertice en pixeles
+
+        float center_x_px = (v1_x_px + v2_x_px) / 2.0f; //  coordenada en x del centro de la caja
+        float center_y_px = (v1_y_px + v2_y_px) / 2.0f; //  coordenada en x del centro de la caja
+
+        float dx_px = v2_x_px - v1_x_px;
+        float dy_px = v2_y_px - v1_y_px;
+        float length_px = sqrtf(dx_px * dx_px + dy_px * dy_px);
+
+        float angle_rad = atan2f(dy_px, dx_px); //  angulo en el que debe estar la caja
+
+        float center_mx = P2M(center_x_px);
+        float center_my = P2M(center_y_px);
+        float length_m = P2M(length_px);
+
+        CreateBoxBody(center_mx, center_my, length_m, thickness_m, false, angle_rad);
+    }
+}

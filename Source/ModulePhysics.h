@@ -24,6 +24,7 @@ public:
 
     b2Body* CreateChain(int x, int y, int* coordinates, int vertex_count); // Crear cadenas a partir de coords en pixeles
 
+    void CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px);
    
     struct Flipper 
     {

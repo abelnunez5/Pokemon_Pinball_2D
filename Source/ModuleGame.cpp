@@ -23,14 +23,16 @@ bool ModuleGame::Start()
 	tablero = LoadTexture("Assets/PokemonPinball_Map.png");
 
 	//	Paredes
-	App->physics->CreateChain(0, 0, Main_Wall, 24);
-	App->physics->CreateChain(0, 0, Right_Wall, 16);
-	App->physics->CreateChain(0, 0, Slowpoke_Wall, 24);
-	App->physics->CreateChain(0, 0, Cloyster_Wall, 24);
-	App->physics->CreateChain(0, 0, GreenWall_L, 7);
-	App->physics->CreateChain(0, 0, GreenWall_R, 7);
-	App->physics->CreateChain(0, 0, Pad_L, 4);
-	App->physics->CreateChain(0, 0, Pad_R, 4);
+	float wall_thickness = 4.0f; // 4 píxeles de grosor
+
+	App->physics->CreateThickerChain(0, 0, Main_Wall, 24, wall_thickness);
+	App->physics->CreateThickerChain(0, 0, Right_Wall, 16, wall_thickness);
+	App->physics->CreateThickerChain(0, 0, Slowpoke_Wall, 24, wall_thickness);
+	App->physics->CreateThickerChain(0, 0, Cloyster_Wall, 24, wall_thickness);
+	App->physics->CreateThickerChain(0, 0, GreenWall_L, 7, wall_thickness);
+	App->physics->CreateThickerChain(0, 0, GreenWall_R, 7, wall_thickness);
+	App->physics->CreateThickerChain(0, 0, Pad_L, 4, wall_thickness);
+	App->physics->CreateThickerChain(0, 0, Pad_R, 4, wall_thickness);
 
 	//	Obstaculos superiores
 	App->physics->CreateBoxBody(ModulePhysics::P2M(204.0f), ModulePhysics::P2M(99.0f), ModulePhysics::P2M(18.0f), ModulePhysics::P2M(54.0f), false);

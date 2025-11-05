@@ -25,7 +25,7 @@ bool ModulePlayer::Start() {
     const float rightPivotPxX = 318.0f;
     const float rightPivotPxY = 772.0f;
 
-    const float flLenPx = 90.0f;
+    const float flLenPx = 65.0f;
     const float flThPx = 18.0f;
 
     leftFlipper = physics->CreateFlipper(leftPivotPxX, leftPivotPxY, flLenPx, flThPx, true);
@@ -38,11 +38,13 @@ bool ModulePlayer::Start() {
 
 
     //Bola
-    const float ballx = 1.0f;
-    const float bally = 1.0f;
+    const float ballx = 5.0f;
+    const float bally = 9.5f;
 
     ballTexture = LoadTexture("Assets/pokeball3.png");
-    ball = physics->CreateCircleBody(ballx,bally,0.45f,true);
+    ball = physics->CreateCircleBody(ballx,bally,0.20f,true);
+
+    ball->SetBullet(true);
 
     //Plunger
     const float plungerx = 10.0f;
@@ -54,9 +56,6 @@ bool ModulePlayer::Start() {
     plunger = physics->CreateBoxBody(plungerx, plungery, plungerw, plungerh, false, 0.0f);
 
     originalPlungerY = plungery; //aqui
-
-
-    ball->SetBullet(true);
 
     return true;
 }
