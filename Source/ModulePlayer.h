@@ -14,6 +14,7 @@ public:
 
     bool Start() override;
     update_status Update() override;
+    void PlungerMovement(float dt);
     void UpdateBallAnimation(float dt);
     void Draw(float dt);
     bool CleanUp() override;
@@ -25,6 +26,7 @@ private:
     ModulePhysics::Flipper rightFlipper{};
 	b2Body* ball = nullptr;
 	b2Body* plunger = nullptr;
+    float originalPlungerY = 0.0f; //aqui
     Texture2D ballTexture{};
     Texture2D plungerTexture{};
 

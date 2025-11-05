@@ -1,4 +1,4 @@
-#include "ModulePlayer.h"
+﻿#include "ModulePlayer.h"
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "ModuleRender.h"
@@ -19,7 +19,7 @@ bool ModulePlayer::Start() {
 	TraceLog(LOG_INFO, "App->physics=%p", (void*)physics); //en que punto lo hace ?
     if (!physics) return true;
 
-// Coordenadas medidas directamente sobre la textura (en p�xeles):
+// Coordenadas medidas directamente sobre la textura (en píxeles):
     const float leftPivotPxX = 163.0f;
     const float leftPivotPxY = 772.0f;
     const float rightPivotPxX = 318.0f;
@@ -53,6 +53,8 @@ bool ModulePlayer::Start() {
     plungerTexture = LoadTexture("Assets/Plunger.png");
     plunger = physics->CreateBoxBody(plungerx, plungery, plungerw, plungerh, false, 0.0f);
 
+    originalPlungerY = plungery; //aqui
+
 
     ball->SetBullet(true);
 
@@ -64,6 +66,9 @@ update_status ModulePlayer::Update() {
     float dt = GetFrameTime();
     bool L = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
     bool R = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
+
+    PlungerMovement(dt); //aqui
+
     physics->SetFlipperPressed(leftFlipper, L);
     physics->SetFlipperPressed(rightFlipper, R);
     UpdateBallAnimation(dt);    
@@ -71,6 +76,72 @@ update_status ModulePlayer::Update() {
     return UPDATE_CONTINUE;
 }
 
+void ModulePlayer::PlungerMovement(float dt)
+{
+    
+    static bool is_charging = false;
+    static double start_time = 0.0;
+
+    
+    const float MAX_CHARGE_TIME_S = 1.0f; 
+    const float MAX_PULL_DISTANCE_M = 3.0f; 
+
+   
+    if (IsKeyPressed(KEY_SPACE))
+    {
+        if (!is_charging)
+        {
+            is_charging = true;
+            start_time = GetTime();
+        }
+    }
+
+    
+    if (IsKeyDown(KEY_SPACE) && is_charging)
+    {
+        double current_time = GetTime();
+        double current_duration_s = current_time - start_time;
+
+    
+        if (current_duration_s > MAX_CHARGE_TIME_S)
+        {
+            current_duration_s = MAX_CHARGE_TIME_S;
+        }
+
+        
+        float displacement_factor = (float)(current_duration_s / MAX_CHARGE_TIME_S);
+
+        
+        float new_y_pos = originalPlungerY + (displacement_factor * MAX_PULL_DISTANCE_M);
+
+      
+        plunger->SetTransform({ plunger->GetPosition().x, new_y_pos }, 0.0f);
+
+       
+      
+    }
+
+
+    if (IsKeyReleased(KEY_SPACE))
+    {
+        if (is_charging)
+        {
+            is_charging = false;
+            double end_time = GetTime();
+            double duration_s = end_time - start_time;
+
+         
+            duration_s = duration_s > MAX_CHARGE_TIME_S ? MAX_CHARGE_TIME_S : duration_s;
+
+            float charge_duration_ms = (float)(duration_s * 1000.0);
+
+      
+            plunger->SetTransform({ plunger->GetPosition().x, originalPlungerY }, 0.0f);
+
+            start_time = 0.0;
+        }
+    }
+}
 void ModulePlayer::UpdateBallAnimation(float dt)
 { 
     const float ANIMATION_DELAY = 0.05f;
@@ -232,8 +303,7 @@ void ModulePlayer::Draw(float dt) {
     float x_pixeles_plunger = ModulePhysics::M2P(plunger->GetPosition().x);
     float y_pixeles_plunger = ModulePhysics::M2P(plunger->GetPosition().y); 
 
-    float draw_x_plunger = x_pixeles_plunger - (sourceRect_p.width / 2.0f);
-    float draw_y_plunger = y_pixeles_plunger - (sourceRect_p.height / 2.0f);
+
 
     App->renderer->Draw(plungerTexture, x_pixeles_plunger, y_pixeles_plunger, &sourceRect_p, 0, 25, 160);
     App->physics->RenderDebug();
@@ -241,5 +311,6 @@ void ModulePlayer::Draw(float dt) {
 
 bool ModulePlayer::CleanUp() {
     UnloadTexture(ballTexture);
+    UnloadTexture(plungerTexture);
     return true;
 }
