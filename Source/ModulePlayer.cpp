@@ -44,7 +44,7 @@ bool ModulePlayer::Start() {
     ballTexture = LoadTexture("Assets/pokeball3.png");
     ball = physics->CreateCircleBody(ballx,bally,0.45f,true);
 
-
+    ball->SetBullet(true);
 
     return true;
 }
