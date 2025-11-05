@@ -24,8 +24,9 @@ public:
 
     b2Body* CreateChain(int x, int y, int* coordinates, int vertex_count); // Crear cadenas a partir de coords en pixeles
 
-    public:
-    struct Flipper {
+   
+    struct Flipper 
+    {
         b2Body* anchor = nullptr;
         b2Body* blade  = nullptr;
         b2RevoluteJoint* joint = nullptr;
