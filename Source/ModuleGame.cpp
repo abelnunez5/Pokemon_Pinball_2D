@@ -22,6 +22,7 @@ bool ModuleGame::Start()
 
 	tablero = LoadTexture("Assets/PokemonPinball_Map.png");
 
+	//	Paredes
 	App->physics->CreateChain(0, 0, Main_Wall, 24);
 	App->physics->CreateChain(0, 0, Right_Wall, 16);
 	App->physics->CreateChain(0, 0, Slowpoke_Wall, 24);
@@ -30,6 +31,21 @@ bool ModuleGame::Start()
 	App->physics->CreateChain(0, 0, GreenWall_R, 7);
 	App->physics->CreateChain(0, 0, Pad_L, 4);
 	App->physics->CreateChain(0, 0, Pad_R, 4);
+
+	//	Obstaculos superiores
+	App->physics->CreateBoxBody(ModulePhysics::P2M(204.0f), ModulePhysics::P2M(99.0f), ModulePhysics::P2M(18.0f), ModulePhysics::P2M(54.0f), false);
+	App->physics->CreateBoxBody(ModulePhysics::P2M(276.0f), ModulePhysics::P2M(99.0f), ModulePhysics::P2M(18.0f), ModulePhysics::P2M(54.0f), false);
+
+	//	Shellder bouncers 
+	App->physics->CreateCircleBody(ModulePhysics::P2M(177.0f), ModulePhysics::P2M(210.0f), ModulePhysics::P2M(24.0f), false);
+	App->physics->CreateCircleBody(ModulePhysics::P2M(240.0f), ModulePhysics::P2M(159.0f), ModulePhysics::P2M(24.0f), false);
+	App->physics->CreateCircleBody(ModulePhysics::P2M(303.0f), ModulePhysics::P2M(210.0f), ModulePhysics::P2M(24.0f), false);
+
+	//	Boton Izda
+	App->physics->CreateBoxBody(ModulePhysics::P2M(81.0f), ModulePhysics::P2M(546.0f), ModulePhysics::P2M(18.0f), ModulePhysics::P2M(48.0f), false);
+
+	//	Psyduck
+	App->physics->CreateCircleBody(ModulePhysics::P2M(408.0f), ModulePhysics::P2M(534.0f), ModulePhysics::P2M(24.0f), false);
 
 	return ret;
 }
