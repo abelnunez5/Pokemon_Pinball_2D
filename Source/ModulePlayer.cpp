@@ -42,7 +42,7 @@ bool ModulePlayer::Start() {
     const float bally = 9.5f;
 
     ballTexture = LoadTexture("Assets/pokeball3.png");
-    ball = physics->CreateCircleBody(ballx,bally,0.39f,true);
+    ball = physics->CreateCircleBody(ballx,bally,0.35f,true);
 
     //Plunger
     const float plungerx = 10.0f;
@@ -79,6 +79,12 @@ update_status ModulePlayer::Update() {
 void ModulePlayer::PlungerMovement(float dt)
 {
     
+    if (canPlunger == false)
+    {
+        return;
+    }
+    
+
     static bool is_charging = false;
     static double start_time = 0.0;
 
@@ -153,7 +159,7 @@ void ModulePlayer::PlungerMovement(float dt)
             
             ball->ApplyLinearImpulseToCenter(impulse_vector, true);
 
-          
+            canPlunger = false;
 
             return; 
         }

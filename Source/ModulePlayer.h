@@ -30,7 +30,7 @@ private:
     bool plungerIsShooting = false;  
     double shootStartTime = 0.0;     
     float shootDurationS = 0.0f;   
-
+    bool canPlunger = true;
     Texture2D ballTexture{};
     Texture2D plungerTexture{};
 
