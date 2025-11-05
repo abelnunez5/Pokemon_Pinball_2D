@@ -38,7 +38,7 @@ bool ModulePlayer::Start() {
 
 
     //Bola
-    const float ballx = 5.0f;
+    const float ballx = 10.2f;
     const float bally = 9.5f;
 
     ballTexture = LoadTexture("Assets/pokeball3.png");
@@ -70,6 +70,20 @@ update_status ModulePlayer::Update() {
 
     physics->SetFlipperPressed(leftFlipper, L);
     physics->SetFlipperPressed(rightFlipper, R);
+
+    const float MAX_SPEED_MS = 20.0f; // Velocidad maxima de la pelota
+    const float MAX_SPEED_SQ = MAX_SPEED_MS * MAX_SPEED_MS;
+
+    b2Vec2 velocity = ball->GetLinearVelocity();
+    float speedSqr = velocity.LengthSquared();
+
+    if (speedSqr > MAX_SPEED_SQ)
+    {
+        velocity.Normalize();
+        velocity *= MAX_SPEED_MS;
+        ball->SetLinearVelocity(velocity);
+    }
+
     UpdateBallAnimation(dt);    
     Draw(dt);
     return UPDATE_CONTINUE;
@@ -81,8 +95,7 @@ void ModulePlayer::PlungerMovement(float dt)
     if (canPlunger == false)
     {
         return;
-    }
-    
+    }    
 
     static bool is_charging = false;
     static double start_time = 0.0;
@@ -108,10 +121,8 @@ void ModulePlayer::PlungerMovement(float dt)
         if (is_charging)
         {
             current_duration_s = GetTime() - start_time;
-
            
             if (current_duration_s > MAX_CHARGE_TIME_S) current_duration_s = MAX_CHARGE_TIME_S;
-
             
             float displacement_factor = current_duration_s / MAX_CHARGE_TIME_S;
             float new_y_pos = originalPlungerY + (displacement_factor * MAX_PULL_DISTANCE_M);
@@ -128,7 +139,6 @@ void ModulePlayer::PlungerMovement(float dt)
             is_charging = false;
             current_duration_s = GetTime() - start_time;
             if (current_duration_s > MAX_CHARGE_TIME_S) current_duration_s = MAX_CHARGE_TIME_S;
-
           
             plungerIsShooting = true;
             shootStartTime = GetTime();
