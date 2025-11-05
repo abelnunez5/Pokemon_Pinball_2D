@@ -7,6 +7,7 @@
 ModuleRender::ModuleRender(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
     background = RAYWHITE;
+    camera = {0, 0, 0, 0 };
 }
 
 // Destructor

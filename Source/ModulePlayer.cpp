@@ -16,14 +16,17 @@ bool ModulePlayer::Start() {
 	TraceLog(LOG_INFO, "App->physics=%p", (void*)physics); //en que punto lo hace ?
     if (!physics) return true;
 
-    const float y = 610.0f;
-    const float xLeft = 330.0f;
-    const float xRight = 470.0f;
-    const float flLen = 90.0f;
-    const float flTh = 18.0f;
+// Coordenadas medidas directamente sobre la textura (en píxeles):
+    const float leftPivotPxX = 163.0f;
+    const float leftPivotPxY = 772.0f;
+    const float rightPivotPxX = 318.0f;
+    const float rightPivotPxY = 772.0f;
 
-    leftFlipper = physics->CreateFlipper(xLeft, y, flLen, flTh, false);
-    rightFlipper = physics->CreateFlipper(xRight, y, flLen, flTh, true);
+    const float flLenPx = 90.0f;
+    const float flThPx = 18.0f;
+
+    leftFlipper = physics->CreateFlipper(leftPivotPxX, leftPivotPxY, flLenPx, flThPx, true);
+    rightFlipper = physics->CreateFlipper(rightPivotPxX, rightPivotPxY, flLenPx, flThPx, false);
 
     TraceLog(LOG_INFO, "Left flipper:  anchor=%p blade=%p joint=%p",
         (void*)leftFlipper.anchor, (void*)leftFlipper.blade, (void*)leftFlipper.joint);

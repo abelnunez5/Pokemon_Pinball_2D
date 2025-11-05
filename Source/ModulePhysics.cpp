@@ -10,8 +10,6 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled)
 
 ModulePhysics::~ModulePhysics() {}
 
-// --- IMPLEMENTACIONES MÍNIMAS QUE EL LINKER NECESITA ---
-
 bool ModulePhysics::Start() // Crea el mundo de Box2D si aún no existe
 { 
 	TraceLog(LOG_INFO, "Creating Physics world"); //que nos diga si ha creado las fisicas 
@@ -66,12 +64,6 @@ bool ModulePhysics::CleanUp()
     return true;
 }
 
-//ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY, float lengthPx, float thicknessPx, bool isRight) {
-//    ModulePhysics::Flipper f{};
-//    return f;
-//
-//
-//}
 ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY,
     float lengthPx, float thicknessPx,
     bool isRight)
@@ -86,7 +78,7 @@ ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY,
     const float halfLen = P2M(lengthPx) * 0.5f;
     const float halfThk = P2M(thicknessPx) * 0.5f;
 
-    // 1) Cuerpo ancla (estático)
+    //Cuerpo ancla (estático)
     b2BodyDef anchorDef;
     anchorDef.type = b2_staticBody;
     anchorDef.position.Set(x, y);
@@ -98,11 +90,17 @@ ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY,
         f.anchor->CreateFixture(&fd);
     }
 
-    // 2) Cuerpo pala (dinámico, caja)
+    //Cuerpo pala (dinámico, caja)
     b2BodyDef bladeDef;
     bladeDef.type = b2_dynamicBody;
-    bladeDef.position.Set(x, y);     // partimos del ancla
-    bladeDef.angle = 0.0f;
+    if (isRight) {
+        // flipper derecho: el ancla está en el extremo izquierdo de la pala
+        bladeDef.position.Set(x + halfLen, y);
+    }
+    else {
+        // flipper izquierdo: el ancla está en el extremo derecho de la pala
+        bladeDef.position.Set(x - halfLen, y);
+	}
     f.blade = world->CreateBody(&bladeDef);
 
     b2PolygonShape box;
@@ -117,7 +115,6 @@ ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY,
         f.blade->CreateFixture(&fd);
     }
 
-    // 3) Junta de giro (revoluta)
     // Anclamos el blade al anchor en el extremo apropiado
     b2RevoluteJointDef jd;
     jd.bodyA = f.anchor;
@@ -130,16 +127,16 @@ ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY,
     // Punto de anclaje en la pala: extremo izquierdo o derecho
     // Si la caja del blade está centrada, su extremo está a +/- halfLen en X.
     if (isRight) {
-        jd.localAnchorB.Set(+halfLen, 0.0f);
+        jd.localAnchorB.Set(-halfLen, 0.0f);
     }
     else {
-        jd.localAnchorB.Set(-halfLen, 0.0f);
+        jd.localAnchorB.Set(+halfLen, 0.0f);
     }
 
     // Límites y motor
     jd.enableLimit = true;
 
-    // Rango típico ~30–40 grados. Ajusta a tu gusto:
+    // AJUSTAR RANGOS:
     const float deg = 35.0f * (3.1415926f / 180.0f);
     if (isRight) {
         // flipper derecho suele girar de “abajo” a “arriba” con ángulo negativo
@@ -153,7 +150,7 @@ ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY,
     }
 
     jd.enableMotor = true;
-    jd.maxMotorTorque = 200.0f; // sube/baja si hace falta
+    jd.maxMotorTorque = 200.0f; // sube/baja 
     jd.motorSpeed = 0.0f; // en reposo
 
     f.joint = (b2RevoluteJoint*)world->CreateJoint(&jd);
@@ -161,33 +158,30 @@ ModulePhysics::Flipper ModulePhysics::CreateFlipper(float posPxX, float posPxY,
     return f;
 }
 
-//void ModulePhysics::SetFlipperPressed(ModulePhysics::Flipper& f, bool pressed) {
-//    
-//}
 void ModulePhysics::SetFlipperPressed(ModulePhysics::Flipper& f, bool pressed)
 {
     if (!f.joint) return;
 
-    // Velocidad del motor (rad/s). Ajusta según respuesta deseada:
+    // Velocidad del motor
     const float upSpeed = 20.0f;
     const float downSpeed = -12.0f;
 
     if (pressed) {
         // Subir rápido
         f.joint->EnableMotor(true);
-        // Sentido: para que ambos suban hacia el centro del tablero, invierte uno
+		// Orientacion del flipper para saber el signo
         float s = f.isRight ? -upSpeed : upSpeed;
         f.joint->SetMotorSpeed(s);
     }
     else {
-        // Bajar por motor (o déjalo en 0 y que la gravedad haga su trabajo)
+        // Bajar por motor 
         f.joint->EnableMotor(true);
-        float s = f.isRight ? -downSpeed : downSpeed; // opposite sign to go down
+		float s = f.isRight ? -downSpeed : downSpeed; // diferente signo
         f.joint->SetMotorSpeed(s);
     }
 }
 
-// helpers básicos, si se usan en otro lado se pueden eliminar de aquí
+// helpers básicos, !! si se usan en otro lado se pueden eliminar de aquí !!
 
 b2Body* ModulePhysics::CreateCircleBody(float mx, float my, float mr, bool dynamic)
 {
