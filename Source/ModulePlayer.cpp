@@ -46,9 +46,9 @@ bool ModulePlayer::Start() {
 
     //Plunger
     const float plungerx = 10.0f;
-    const float plungery = 12.0f;
+    const float plungery = 13.5f;
     const float plungerw = 1.0f;
-    const float plungerh = 12.0f;
+    const float plungerh = 6.5f;
 
     plungerTexture = LoadTexture("Assets/Plunger.png");
     plunger = physics->CreateBoxBody(plungerx, plungery, plungerw, plungerh, false, 0.0f);
@@ -200,7 +200,8 @@ void ModulePlayer::UpdateBallAnimation(float dt)
 
 void ModulePlayer::Draw(float dt) {
 	if (!physics || !ball) return;
-    Rectangle sourceRect;
+   //rect ball
+   Rectangle sourceRect;
 
     switch (currentBallState)
     {
@@ -215,8 +216,8 @@ void ModulePlayer::Draw(float dt) {
     default:                                    sourceRect = { 216.0f, 0.0f, 48.0f, 48.0f }; break;
     }
 
-
-    Rectangle sourceRect_p = { 0.0f, 0.0f, 8.0f, 46.0f };
+    //rect plunger
+    Rectangle sourceRect_p = { 0.0f, 0.0f, 56.0f, 322.0f };
 
     float x_pixeles_ball = ModulePhysics::M2P(ball->GetPosition().x);
     float y_pixeles_ball = ModulePhysics::M2P(ball->GetPosition().y);
@@ -231,10 +232,10 @@ void ModulePlayer::Draw(float dt) {
     float x_pixeles_plunger = ModulePhysics::M2P(plunger->GetPosition().x);
     float y_pixeles_plunger = ModulePhysics::M2P(plunger->GetPosition().y); 
 
-    float draw_x_plunger = x_pixeles_plunger - (sourceRect.width / 2.0f);
-    float draw_y_plunger = y_pixeles_plunger - (sourceRect.height / 2.0f);
+    float draw_x_plunger = x_pixeles_plunger - (sourceRect_p.width / 2.0f);
+    float draw_y_plunger = y_pixeles_plunger - (sourceRect_p.height / 2.0f);
 
-    App->renderer->Draw(plungerTexture, draw_x_plunger, draw_y_plunger, &sourceRect_p, 0, 0, 0);
+    App->renderer->Draw(plungerTexture, x_pixeles_plunger, y_pixeles_plunger, &sourceRect_p, 0, 25, 160);
     App->physics->RenderDebug();
 }
 
