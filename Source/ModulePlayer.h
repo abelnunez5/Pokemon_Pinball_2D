@@ -27,6 +27,10 @@ private:
 	b2Body* ball = nullptr;
 	b2Body* plunger = nullptr;
     float originalPlungerY = 0.0f; //aqui
+    bool plungerIsShooting = false;  
+    double shootStartTime = 0.0;     
+    float shootDurationS = 0.0f;   
+
     Texture2D ballTexture{};
     Texture2D plungerTexture{};
 

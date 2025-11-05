@@ -38,11 +38,11 @@ bool ModulePlayer::Start() {
 
 
     //Bola
-    const float ballx = 1.0f;
-    const float bally = 1.0f;
+    const float ballx = 10.2f;
+    const float bally = 9.5f;
 
     ballTexture = LoadTexture("Assets/pokeball3.png");
-    ball = physics->CreateCircleBody(ballx,bally,0.45f,true);
+    ball = physics->CreateCircleBody(ballx,bally,0.39f,true);
 
     //Plunger
     const float plungerx = 10.0f;
@@ -53,7 +53,7 @@ bool ModulePlayer::Start() {
     plungerTexture = LoadTexture("Assets/Plunger.png");
     plunger = physics->CreateBoxBody(plungerx, plungery, plungerw, plungerh, false, 0.0f);
 
-    originalPlungerY = plungery; //aqui
+    originalPlungerY = plungery; 
 
 
     ball->SetBullet(true);
@@ -82,66 +82,100 @@ void ModulePlayer::PlungerMovement(float dt)
     static bool is_charging = false;
     static double start_time = 0.0;
 
+   
+    const float MAX_CHARGE_TIME_S = 1.0f;    
+    const float MAX_PULL_DISTANCE_M = 2.5f;  
+
     
-    const float MAX_CHARGE_TIME_S = 1.0f; 
-    const float MAX_PULL_DISTANCE_M = 3.0f; 
+    const float PLUNGER_RISE_TIME_S = 0.2f; 
+
+    float current_duration_s = 0.0f; 
 
    
-    if (IsKeyPressed(KEY_SPACE))
+    if (IsKeyDown(KEY_SPACE))
     {
-        if (!is_charging)
+        if (IsKeyPressed(KEY_SPACE) && !is_charging)
         {
             is_charging = true;
             start_time = GetTime();
         }
-    }
 
-    
-    if (IsKeyDown(KEY_SPACE) && is_charging)
-    {
-        double current_time = GetTime();
-        double current_duration_s = current_time - start_time;
-
-    
-        if (current_duration_s > MAX_CHARGE_TIME_S)
-        {
-            current_duration_s = MAX_CHARGE_TIME_S;
-        }
-
-        
-        float displacement_factor = (float)(current_duration_s / MAX_CHARGE_TIME_S);
-
-        
-        float new_y_pos = originalPlungerY + (displacement_factor * MAX_PULL_DISTANCE_M);
-
-      
-        plunger->SetTransform({ plunger->GetPosition().x, new_y_pos }, 0.0f);
-
-       
-      
-    }
-
-
-    if (IsKeyReleased(KEY_SPACE))
-    {
         if (is_charging)
         {
-            is_charging = false;
-            double end_time = GetTime();
-            double duration_s = end_time - start_time;
+            current_duration_s = GetTime() - start_time;
 
-         
-            duration_s = duration_s > MAX_CHARGE_TIME_S ? MAX_CHARGE_TIME_S : duration_s;
+           
+            if (current_duration_s > MAX_CHARGE_TIME_S) current_duration_s = MAX_CHARGE_TIME_S;
 
-            float charge_duration_ms = (float)(duration_s * 1000.0);
-
-      
-            plunger->SetTransform({ plunger->GetPosition().x, originalPlungerY }, 0.0f);
-
-            start_time = 0.0;
+            
+            float displacement_factor = current_duration_s / MAX_CHARGE_TIME_S;
+            float new_y_pos = originalPlungerY + (displacement_factor * MAX_PULL_DISTANCE_M);
+            plunger->SetTransform({ plunger->GetPosition().x, new_y_pos }, 0.0f);
         }
     }
+
+   
+    else if (IsKeyReleased(KEY_SPACE))
+    {
+        if (is_charging && !plungerIsShooting)
+        {
+         
+            is_charging = false;
+            current_duration_s = GetTime() - start_time;
+            if (current_duration_s > MAX_CHARGE_TIME_S) current_duration_s = MAX_CHARGE_TIME_S;
+
+          
+            plungerIsShooting = true;
+            shootStartTime = GetTime();
+            shootDurationS = current_duration_s; 
+        }
+    }
+
+    
+    if (plungerIsShooting)
+    {
+        double time_since_shoot = GetTime() - shootStartTime;
+
+        
+        if (time_since_shoot >= PLUNGER_RISE_TIME_S)
+        {
+            plungerIsShooting = false;
+           
+            plunger->SetTransform({ plunger->GetPosition().x, originalPlungerY }, 0.0f);
+
+         
+            const float MAX_IMPULSE = 15.0f; 
+            float impulse_magnitude = (shootDurationS / MAX_CHARGE_TIME_S) * MAX_IMPULSE;
+
+           
+            b2Vec2 impulse_vector(0.0f, -impulse_magnitude);
+
+            
+            ball->ApplyLinearImpulseToCenter(impulse_vector, true);
+
+          
+
+            return; 
+        }
+
+       
+        float rise_factor = (float)(time_since_shoot / PLUNGER_RISE_TIME_S); 
+
+
+        float current_pull = (shootDurationS / MAX_CHARGE_TIME_S) * MAX_PULL_DISTANCE_M; 
+
+        float new_y_pos = (current_pull * (1.0f - rise_factor)) + originalPlungerY;
+
+        plunger->SetTransform({ plunger->GetPosition().x, new_y_pos }, 0.0f);
+    }
+
+  
+    if (!is_charging && !plungerIsShooting)
+    {
+   
+    }
 }
+
 void ModulePlayer::UpdateBallAnimation(float dt)
 { 
     const float ANIMATION_DELAY = 0.05f;
