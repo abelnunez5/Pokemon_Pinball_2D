@@ -27,6 +27,7 @@ public:
 
 	Texture2D tableroMenu;
 	Texture2D tableroGame;
+	Texture2D gameOverScreen;
 
 	unsigned int sfx_bouncer;
 	unsigned int sfx_pads;
