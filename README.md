@@ -41,7 +41,7 @@ This recreation includes:
 # ✨Controls ![Espeon](https://media.tenor.com/cERJ7M_mH-cAAAAj/eeveelution-eevee-evolution.gif)
 
 - **A/D** move Flippers
-- **SPACEBAR** Charge ball
+- **UP KEY** Charge ball
 - **ENTER** Skyp intro
 
 
