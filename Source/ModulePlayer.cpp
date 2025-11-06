@@ -42,8 +42,8 @@ bool ModulePlayer::Start() {
 
 
     //Bola
-    const float ballx = 10.2f;
-    const float bally = 9.5f;
+    const float ballx = 10.1f;
+    const float bally = 4.0f;
     ball = physics->CreateCircleBody(ballx, bally, 0.20f, true, BodyType::BALL);
 
     ballTexture = LoadTexture("Assets/pokeball3.png");
@@ -430,7 +430,7 @@ void ModulePlayer::Draw(float dt) {
 
 
 
-    App->renderer->Draw(plungerTexture, x_pixeles_plunger, y_pixeles_plunger, &sourceRect_p, 0, 25, 160);
+    App->renderer->Draw(plungerTexture, x_pixeles_plunger, y_pixeles_plunger, &sourceRect_p, 0, 25, 150);
     App->physics->RenderDebug();
 }
 
