@@ -1,8 +1,8 @@
-# ![rayquaza](https://media.tenor.com/o7-lGxrrr6UAAAAj/rayquaza-pok%C3%A9mon.gif) POKEMON PINBALL GBC ![rayquaza](https://media.tenor.com/o7-lGxrrr6UAAAAj/rayquaza-pok%C3%A9mon.gif)
+# ![rayquaza](https://media.tenor.com/o7-lGxrrr6UAAAAj/rayquaza-pok%C3%A9mon.gif) POKÉMON PINBALL GBC ![rayquaza](https://media.tenor.com/o7-lGxrrr6UAAAAj/rayquaza-pok%C3%A9mon.gif)
 
 # ✨Description ![evee](https://media.tenor.com/sj3IHPPDOxEAAAAi/eevee-eevee-evolution.gif)
 
-Recreation of Pokemon Pinball for the Game Boy. This recreation is made on a surface level compared with the original one, meaning that many features are not included, as more than one map.
+Recreation of Pokémon Pinball for the Game Boy. This recreation is made on a surface level compared with the original one, meaning that many features are not included, as more than one map.
 
 This recreation includes:
 
