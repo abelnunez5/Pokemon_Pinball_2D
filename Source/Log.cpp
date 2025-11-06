@@ -1,5 +1,5 @@
 #pragma once
-
+#include "DebugLeak.h"
 #include "Globals.h"
 
 void log(const char file[], int line, const char* format, ...)

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "DebugLeak.h"
 #include "Globals.h"
 
 class Application;

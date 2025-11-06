@@ -1,11 +1,11 @@
 
+#include "DebugLeak.h"
 #include "Module.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
 #include "ModuleGame.h"
-
 #include "Application.h"
 
 Application::Application()

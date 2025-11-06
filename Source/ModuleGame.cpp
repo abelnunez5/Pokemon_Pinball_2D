@@ -1,3 +1,4 @@
+#include "DebugLeak.h"
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleRender.h"

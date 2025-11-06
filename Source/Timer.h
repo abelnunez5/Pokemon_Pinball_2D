@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DebugLeak.h"
 #include "Globals.h"
 #include "Timer.h"
 

@@ -5,6 +5,7 @@
 #ifndef __P2POINT_H__
 #define __P2POINT_H__
 
+#include "DebugLeak.h"
 #include <math.h>
 
 template<class TYPE>

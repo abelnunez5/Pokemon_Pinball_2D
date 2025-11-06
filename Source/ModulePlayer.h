@@ -1,4 +1,5 @@
 #pragma once
+#include "DebugLeak.h"
 #include "Module.h"
 #include "ModulePhysics.h"
 #include <string.h>

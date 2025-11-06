@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DebugLeak.h"
 #include "Module.h"
 
 #define MAX_SOUNDS	16
