@@ -60,8 +60,15 @@ public:
 
     void SetFlipperPressed(Flipper& f, bool pressed);
 
-private:
+    //arrastrar la pelota 
+    b2Body* ground = nullptr;
     b2World* world = nullptr;
+
+    b2Body* FindBodyAtPosition(b2Vec2 point);
+
+
+private:
+    
     bool     debug = false;
 
     double accumulator = 0.0;
