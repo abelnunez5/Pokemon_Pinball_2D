@@ -27,6 +27,8 @@ public:
 	bool PlayFx(unsigned int fx, int repeat = 0);
 	bool StopFx(unsigned int fx);
 
+	bool SetFxVolume(unsigned int fx, float volume);
+
 private:
 
 	Music music;

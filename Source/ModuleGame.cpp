@@ -26,6 +26,12 @@ bool ModuleGame::Start()
 	App->audio->LoadFx("Assets/Audio/01 Title Screen.wav");
 	App->audio->LoadFx("Assets/Audio/05 Red Field Theme.wav");
 
+	sfx_bouncer = App->audio->LoadFx("Assets/Audio/SFX/Shellder_SFX.ogg");
+	sfx_pads = App->audio->LoadFx("Assets/Audio/SFX/Pad_SFX.ogg");
+
+	App->audio->SetFxVolume(sfx_bouncer - 1, 4.0f);
+	App->audio->SetFxVolume(sfx_pads - 1, 4.0f);
+
 	//	Paredes
 	float wall_thickness = 4.0f; // 4 píxeles de grosor
 	float wall_restitution = 1.25f; // Cambiar esto poara que la bola rebote más
@@ -36,17 +42,17 @@ bool ModuleGame::Start()
 	App->physics->CreateThickerChain(0, 0, Cloyster_Wall, 24, wall_thickness);
 	App->physics->CreateThickerChain(0, 0, GreenWall_L, 7, wall_thickness);
 	App->physics->CreateThickerChain(0, 0, GreenWall_R, 7, wall_thickness);
-	App->physics->CreateThickerChain(0, 0, Pad_L, 4, wall_thickness, wall_restitution);
-	App->physics->CreateThickerChain(0, 0, Pad_R, 4, wall_thickness, wall_restitution);
+	App->physics->CreateThickerChain(0, 0, Pad_L, 4, wall_thickness, wall_restitution, BodyType::PAD);
+	App->physics->CreateThickerChain(0, 0, Pad_R, 4, wall_thickness, wall_restitution, BodyType::PAD);
 
 	//	Obstaculos superiores
 	App->physics->CreateBoxBody(ModulePhysics::P2M(204.0f), ModulePhysics::P2M(99.0f), ModulePhysics::P2M(18.0f), ModulePhysics::P2M(54.0f), false);
 	App->physics->CreateBoxBody(ModulePhysics::P2M(276.0f), ModulePhysics::P2M(99.0f), ModulePhysics::P2M(18.0f), ModulePhysics::P2M(54.0f), false);
 
 	//	Shellder bouncers 
-	App->physics->CreateCircleBody(ModulePhysics::P2M(177.0f), ModulePhysics::P2M(210.0f), ModulePhysics::P2M(24.0f), false);
-	App->physics->CreateCircleBody(ModulePhysics::P2M(240.0f), ModulePhysics::P2M(159.0f), ModulePhysics::P2M(24.0f), false);
-	App->physics->CreateCircleBody(ModulePhysics::P2M(303.0f), ModulePhysics::P2M(210.0f), ModulePhysics::P2M(24.0f), false);
+	App->physics->CreateCircleBody(ModulePhysics::P2M(177.0f), ModulePhysics::P2M(210.0f), ModulePhysics::P2M(24.0f), false, BodyType::BOUNCER);
+	App->physics->CreateCircleBody(ModulePhysics::P2M(240.0f), ModulePhysics::P2M(159.0f), ModulePhysics::P2M(24.0f), false, BodyType::BOUNCER);
+	App->physics->CreateCircleBody(ModulePhysics::P2M(303.0f), ModulePhysics::P2M(210.0f), ModulePhysics::P2M(24.0f), false, BodyType::BOUNCER);
 
 	//	Boton Izda
 	App->physics->CreateBoxBody(ModulePhysics::P2M(81.0f), ModulePhysics::P2M(546.0f), ModulePhysics::P2M(18.0f), ModulePhysics::P2M(48.0f), false);
@@ -84,7 +90,7 @@ update_status ModuleGame::Update()
 				App->audio->PlayFx(1, 1);
 
 			break;
-	}
+		}
 	}
 
 	App->physics->RenderDebug();

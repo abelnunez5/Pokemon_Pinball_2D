@@ -1,7 +1,10 @@
 ﻿#include "ModulePhysics.h"
 #include "Application.h"
 #include "ModuleRender.h"
+#include "ModuleGame.h"
 #include "raylib.h"
+
+#include "ModuleAudio.h"
 
 // Constructor / Destructor
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled)
@@ -17,6 +20,8 @@ bool ModulePhysics::Start() // Crea el mundo de Box2D si aún no existe
    b2Vec2 gravity(0.0f, 9.8f);
    world = new b2World(gravity);
    accumulator = 0.0;
+
+   world->SetContactListener(this);
 
    TraceLog(LOG_INFO, "Physics world created successfully",(void*)world); // que nos diga cuando ha creado las fisicas 
 
@@ -188,7 +193,7 @@ void ModulePhysics::SetFlipperPressed(ModulePhysics::Flipper& f, bool pressed)
 
 // helpers básicos, !! si se usan en otro lado se pueden eliminar de aquí !!
 
-b2Body* ModulePhysics::CreateCircleBody(float mx, float my, float mr, bool dynamic)
+b2Body* ModulePhysics::CreateCircleBody(float mx, float my, float mr, bool dynamic, BodyType type)
 {
     if (!world) return nullptr;
     b2BodyDef bd; bd.type = dynamic ? b2_dynamicBody : b2_staticBody; bd.position.Set(mx, my);
@@ -202,19 +207,21 @@ b2Body* ModulePhysics::CreateCircleBody(float mx, float my, float mr, bool dynam
         fd.filter.categoryBits = CAT_BALL;
         fd.filter.maskBits = CAT_TABLE | CAT_FLIPPER;
     }
-    else    // Si no será un bouncer
+    else    // Si no, será un bouncer
     {
         fd.restitution = 1.5f;
         fd.filter.categoryBits = CAT_TABLE;
         fd.filter.maskBits = CAT_BALL;
     }
 	
-    body->CreateFixture(&fd);
+    b2Fixture* fixture = body->CreateFixture(&fd);
+
+    fixture->GetUserData().pointer = static_cast<uintptr_t>(type);    
 
     return body;
 }
 
-b2Body* ModulePhysics::CreateBoxBody(float mx, float my, float mw, float mh, bool dynamic, float angleRad, float restitution)
+b2Body* ModulePhysics::CreateBoxBody(float mx, float my, float mw, float mh, bool dynamic, float angleRad, float restitution, BodyType type)
 {
     if (!world) return nullptr;
     b2BodyDef bd; bd.type = dynamic ? b2_dynamicBody : b2_staticBody; bd.position.Set(mx, my); bd.angle = angleRad;
@@ -234,7 +241,11 @@ b2Body* ModulePhysics::CreateBoxBody(float mx, float my, float mw, float mh, boo
 	if (!dynamic) {fd.filter.categoryBits = CAT_TABLE;
     fd.filter.maskBits = CAT_BALL;
 	}
-    body->CreateFixture(&fd);
+
+    b2Fixture* fixture = body->CreateFixture(&fd);
+
+    fixture->GetUserData().pointer = static_cast<uintptr_t>(type);
+
     return body;
 }
 
@@ -331,7 +342,7 @@ b2Body* ModulePhysics::CreateChain(int x, int y, int* coordinates, int vertex_co
     return body;
 }
 
-void ModulePhysics::CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px, float restitution)
+void ModulePhysics::CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px, float restitution, BodyType type)
 {
     if (!world) return;
 
@@ -357,6 +368,36 @@ void ModulePhysics::CreateThickerChain(int x, int y, int* coordinates, int verte
         float center_my = P2M(center_y_px);
         float length_m = P2M(length_px);
 
-        CreateBoxBody(center_mx, center_my, length_m, thickness_m, false, angle_rad, restitution);
+        CreateBoxBody(center_mx, center_my, length_m, thickness_m, false, angle_rad, restitution, type);
+    }
+}
+
+void ModulePhysics::BeginContact(b2Contact* contact)
+{
+    b2Fixture* fixtureA = contact->GetFixtureA();
+    b2Fixture* fixtureB = contact->GetFixtureB();
+
+    uintptr_t userDataA = fixtureA->GetUserData().pointer;
+    uintptr_t userDataB = fixtureB->GetUserData().pointer;
+
+    BodyType typeA = static_cast<BodyType>(userDataA);
+    BodyType typeB = static_cast<BodyType>(userDataB);
+
+    //LOG("Colision detectada: A=%d, B=%d", (int)typeA, (int)typeB);
+
+    if ((typeA == BodyType::BALL && typeB == BodyType::BOUNCER) || (typeA == BodyType::BOUNCER && typeB == BodyType::BALL))
+    {
+        if (App->scene_intro) 
+        {
+            App->audio->PlayFx(App->scene_intro->sfx_bouncer - 1);
+        }
+    }
+
+    if ((typeA == BodyType::BALL && typeB == BodyType::PAD) || (typeA == BodyType::PAD && typeB == BodyType::BALL))
+    {
+        if (App->scene_intro)
+        {
+            App->audio->PlayFx(App->scene_intro->sfx_pads - 1);
+        }
     }
 }

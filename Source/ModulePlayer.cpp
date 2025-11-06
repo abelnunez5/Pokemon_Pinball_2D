@@ -44,7 +44,7 @@ bool ModulePlayer::Start() {
     //Bola
     const float ballx = 10.2f;
     const float bally = 9.5f;
-    ball = physics->CreateCircleBody(ballx, bally, 0.20f, true);
+    ball = physics->CreateCircleBody(ballx, bally, 0.20f, true, BodyType::BALL);
 
     ballTexture = LoadTexture("Assets/pokeball3.png");
     ball->SetBullet(true);

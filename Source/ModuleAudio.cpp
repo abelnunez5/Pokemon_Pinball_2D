@@ -127,3 +127,21 @@ bool ModuleAudio::StopFx(unsigned int id)
 
 	return ret;
 }
+
+bool ModuleAudio::SetFxVolume(unsigned int id, float volume)
+{
+	if (IsEnabled() == false)
+	{
+		return false;
+	}
+
+	bool ret = false;
+
+	if (id < fx_count)
+	{
+		SetSoundVolume(fx[id], volume);
+		ret = true;
+	}
+
+	return ret;
+}

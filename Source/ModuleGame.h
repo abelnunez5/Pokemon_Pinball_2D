@@ -28,4 +28,7 @@ public:
 
 	Texture2D tableroMenu;
 	Texture2D tableroGame;
+
+	unsigned int sfx_bouncer;
+	unsigned int sfx_pads;
 };

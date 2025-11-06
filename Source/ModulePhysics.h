@@ -3,6 +3,8 @@
 #include "raylib.h"
 #include <box2d/box2d.h>
 
+class ModuleGame;
+
 // Categorías de colisión
 enum CollisionCategory : uint16 {
     CAT_TABLE = 0x0001, // paredes / tablero
@@ -10,7 +12,15 @@ enum CollisionCategory : uint16 {
     CAT_FLIPPER = 0x0004, // palas del flipper
 };
 
-class ModulePhysics : public Module {
+enum class BodyType
+{
+    BASE,
+    BALL, 
+    BOUNCER,
+    PAD
+};
+
+class ModulePhysics : public Module, public b2ContactListener {
 public:
     ModulePhysics(Application* app, bool start_enabled = true);
     ~ModulePhysics() override;
@@ -20,9 +30,11 @@ public:
     update_status PostUpdate() override;
     bool CleanUp() override;
 
+    void BeginContact(b2Contact* contact) override;
+
     // Helpers simples
-    b2Body* CreateCircleBody(float mx, float my, float mr, bool dynamic);
-    b2Body* CreateBoxBody(float mx, float my, float mw, float mh, bool dynamic, float angleRad = 0.0f, float restitution = -1.0f);
+    b2Body* CreateCircleBody(float mx, float my, float mr, bool dynamic, BodyType type = BodyType::BASE);
+    b2Body* CreateBoxBody(float mx, float my, float mw, float mh, bool dynamic, float angleRad = 0.0f, float restitution = -1.0f, BodyType type = BodyType::BASE);
     void    DestroyBody(b2Body* body);
     Vector2 GetBodyPosition(b2Body* body) const;
 
@@ -31,7 +43,7 @@ public:
 
     b2Body* CreateChain(int x, int y, int* coordinates, int vertex_count); // Crear cadenas a partir de coords en pixeles
 
-    void CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px, float restitution = -1.0f);
+    void CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px, float restitution = -1.0f, BodyType type = BodyType::BASE);
    
     struct Flipper 
     {
