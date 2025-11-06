@@ -419,7 +419,7 @@ void ModulePlayer::Draw(float dt) {
 
 
 
-    App->renderer->Draw(plungerTexture, x_pixeles_plunger, y_pixeles_plunger, &sourceRect_p, 0, 25, 160);
+    App->renderer->Draw(plungerTexture, x_pixeles_plunger, y_pixeles_plunger, &sourceRect_p, 0, 25, 150);
     App->physics->RenderDebug();
 }
 
