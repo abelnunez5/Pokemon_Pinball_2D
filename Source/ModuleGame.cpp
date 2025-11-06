@@ -60,7 +60,7 @@ bool ModuleGame::Start()
 	App->physics->CreateBoxBody(ModulePhysics::P2M(81.0f), ModulePhysics::P2M(546.0f), ModulePhysics::P2M(18.0f), ModulePhysics::P2M(48.0f), false);
 
 	//	Psyduck
-	App->physics->CreateCircleBody(ModulePhysics::P2M(408.0f), ModulePhysics::P2M(534.0f), ModulePhysics::P2M(24.0f), false);
+	App->physics->CreateCircleBody(ModulePhysics::P2M(408.0f), ModulePhysics::P2M(534.0f), ModulePhysics::P2M(24.0f), false, BodyType::BOUNCER);
 
 	return ret;
 }
