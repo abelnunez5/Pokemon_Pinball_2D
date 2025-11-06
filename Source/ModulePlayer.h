@@ -19,10 +19,10 @@ public:
 	float flThPx = 18.0f;   //Grosor de flipper
 
 	float pivotInsetL_texX = 25.0f; // Inseto pivote flipper izquierdo en textura
-	float pivotInsetR_texX = 25.0f; // Inseto pivote flipper derecho en textura
+	float pivotInsetR_texX = 0.0f; // Inseto pivote flipper derecho en textura
 
 	float pivotInsetL_texY = -2.0f; // Inseto pivote flippers en textura
-	float pivotInsetR_texY = -8.0f; // Inseto pivote flippers en textura
+	float pivotInsetR_texY = -2.0f; // Inseto pivote flippers en textura
 
     bool Start() override;
     update_status Update() override;

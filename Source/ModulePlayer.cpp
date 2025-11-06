@@ -91,13 +91,13 @@ update_status ModulePlayer::Update() {
             float scaleX = destW / (float)tex.width;
             float scaleY = destH / (float)tex.height;
 
-            float insetX_dest = (isLeft ? pivotInsetL_texX : pivotInsetR_texX) * scaleX;
-            float insetY_dest = (isLeft ? pivotInsetL_texY : pivotInsetR_texY) * scaleY;
+            float insetX_dest = (isLeft ? pivotInsetL_texX : pivotInsetL_texX) * scaleX;
+            float insetY_dest = pivotInsetL_texY * scaleY;
 
-            int pivot_x = (int)(isLeft ? (destW - insetX_dest) : insetX_dest);
+            int pivot_x = (int)(isLeft ? (destW - insetX_dest) : ( insetX_dest));
             int pivot_y = (int)((destH * 0.5f) + insetY_dest);
 
-            int drawX = (int)(ax - pivot_x);
+            int drawX = (int)(isLeft ? ax - pivot_x : ax   );
             int drawY = (int)(ay - pivot_y);
 
             Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
