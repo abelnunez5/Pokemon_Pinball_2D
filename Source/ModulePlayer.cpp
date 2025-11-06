@@ -3,7 +3,7 @@
 #include "ModulePhysics.h"
 #include "ModuleRender.h"
 #include "raylib.h"
-
+#include <iostream>
 
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled)
@@ -13,7 +13,7 @@ ModulePlayer::ModulePlayer(Application* app, bool start_enabled)
 ModulePlayer::~ModulePlayer() {}
 
 bool ModulePlayer::Start() {
-
+   
 	TraceLog(LOG_INFO, "Player start BGEIN"); // Esta creando los flippers ?
     physics = App->physics;
 
@@ -59,19 +59,7 @@ bool ModulePlayer::Start() {
     plungerTexture = LoadTexture("Assets/Plunger.png");
 
     originalPlungerY = plungery;
-    switch (App->gameStatus) {
-        case 1: {
-
-            break;
-        }
-        case 2: {
-            
-            break;
-        }
-    }
-
-	
-
+   
     return true;
 }
 
@@ -83,9 +71,12 @@ update_status ModulePlayer::Update() {
 
     switch (App->gameStatus) {
     case 1: {
-        if (IsKeyDown(KEY_ENTER) || IsKeyDown(KEY_ENTER)) {
-            App->gameStatus = Application::GameState::GAME;
-            
+        if (!IsKeyReleased(KEY_SPACE) || !IsKeyReleased(KEY_ENTER)) {
+            if (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_ENTER)) {
+                App->gameStatus = Application::GameState::GAME;
+                lives = 0;
+            }
+
         }
 
         break;
@@ -142,13 +133,32 @@ update_status ModulePlayer::Update() {
             velocity *= MAX_SPEED_MS;
             ball->SetLinearVelocity(velocity);
         }
+        std::cout << ball->GetPosition().y << std::endl;
+
+        if (ball->GetPosition().y < 3)
+            canPlunger = false;
+
+        if (ball->GetPosition().y > 18 && lives >= 0) {
+            ball = physics->CreateCircleBody(10.2f, 9.5f, 0.20f, true, BodyType::BALL);
+            canPlunger = true;
+            lives--;
+        }
+
+        if (lives == -1)
+            App->gameStatus = Application::GameState::GAMEOVER;
 
         UpdateBallAnimation(dt);
         Draw(dt);
         break;
     }
-    }
+    case 3: {
+        if (IsKeyReleased(KEY_SPACE) || IsKeyReleased(KEY_ENTER)) {
+            App->gameStatus = Application::GameState::MENU;
 
+        }
+        break;
+    }
+    }
     
     return UPDATE_CONTINUE;
 }
@@ -232,7 +242,8 @@ void ModulePlayer::PlungerMovement(float dt)
             
             ball->ApplyLinearImpulseToCenter(impulse_vector, true);
 
-            canPlunger = false;
+
+           
 
             return; 
         }

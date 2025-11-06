@@ -46,6 +46,7 @@ private:
     bool canPlunger = true;
     Texture2D ballTexture{};
     Texture2D plungerTexture{};
+    int lives;
 
     enum class BallState {
         RECTA,
