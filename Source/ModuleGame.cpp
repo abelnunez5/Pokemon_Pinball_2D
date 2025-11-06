@@ -22,7 +22,7 @@ bool ModuleGame::Start()
 
 	tableroMenu = LoadTexture("Assets/Start Screen/TitleScreen_v2_scaled_3x.png");
 	tableroGame = LoadTexture("Assets/PokemonPinball_Map.png");
-	gameOverScreen = LoadTexture("Assets/GameOver_Screen.png");
+	gameOverScreen = LoadTexture("Assets/GameOver_Screen_v2.png");
 
 	App->audio->LoadFx("Assets/Audio/01 Title Screen.wav");
 	App->audio->LoadFx("Assets/Audio/05 Red Field Theme.wav");
