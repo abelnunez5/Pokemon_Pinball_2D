@@ -13,8 +13,8 @@ ModulePlayer::ModulePlayer(Application* app, bool start_enabled)
 ModulePlayer::~ModulePlayer() {}
 
 bool ModulePlayer::Start() {
-   
-	TraceLog(LOG_INFO, "Player start BGEIN"); // Esta creando los flippers ?
+
+	TraceLog(LOG_INFO, "Player start BEGIN"); // Esta creando los flippers ?
     physics = App->physics;
 
 	TraceLog(LOG_INFO, "App->physics=%p", (void*)physics); //en que punto lo hace ?
@@ -129,6 +129,47 @@ update_status ModulePlayer::Update() {
         // Llamadas:
 		drawFlipper(leftFlipper, texFlipperL, /*isLeft=*/true); // dibuja flipper izquierdo
 		drawFlipper(rightFlipper, texFlipperR, /*isLeft=*/false); // dibuja flipper derecho
+
+
+        //Obtener la posición del ratón en unidades de Box2D
+
+        Vector2 mouse_pos_px = GetMousePosition();
+        b2Vec2 mouse_position_m(ModulePhysics::P2M(mouse_pos_px.x), ModulePhysics::P2M(mouse_pos_px.y));
+
+        // LÓGICA DE CREACIÓN (Click Presionado)
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && mouse_joint == nullptr)
+        {
+           
+            b2Body* body_clicked = App->physics->FindBodyAtPosition(mouse_position_m);
+
+            if (body_clicked != nullptr) 
+            {
+               
+                b2MouseJointDef def;
+                def.bodyA = App->physics->ground; 
+                def.bodyB = body_clicked;
+                def.target = mouse_position_m;
+                def.damping = 0.5f;
+                def.stiffness = 5.0f;
+                def.maxForce = 100.0f * body_clicked->GetMass();
+
+                mouse_joint = (b2MouseJoint*)App->physics->world->CreateJoint(&def);
+            }
+        }
+
+        if (mouse_joint != nullptr)
+        {
+            // Mueve el punto objetivo para seguir al ratón
+            mouse_joint->SetTarget(mouse_position_m);
+        }
+
+        // LÓGICA DE DESTRUCCIÓN (Botón Soltado)
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && mouse_joint != nullptr)
+        {
+            App->physics->world->DestroyJoint(mouse_joint);
+            mouse_joint = nullptr;
+        }
+        // -------------------------------------------------
 
         const float MAX_SPEED_MS = 20.0f; // Velocidad maxima de la pelota
         const float MAX_SPEED_SQ = MAX_SPEED_MS * MAX_SPEED_MS;

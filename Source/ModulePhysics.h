@@ -60,6 +60,13 @@ public:
 
     void SetFlipperPressed(Flipper& f, bool pressed);
 
+    //arrastrar la pelota 
+    b2Body* ground = nullptr;
+    b2World* world = nullptr;
+
+    b2Body* FindBodyAtPosition(b2Vec2 point);
+
+
 	struct Gate { // una compuerta que puede abrirse y cerrarse
         b2Body* body = nullptr;
         b2Fixture* fix = nullptr;   // la fixture de la compuerta
@@ -70,7 +77,7 @@ public:
     void SetGateClosed(Gate& g, bool closed);
 
 private:
-    b2World* world = nullptr;
+    
     bool     debug = false;
 
     double accumulator = 0.0;

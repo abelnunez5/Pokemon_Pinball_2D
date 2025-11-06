@@ -23,6 +23,12 @@ bool ModulePhysics::Start() // Crea el mundo de Box2D si aún no existe
 
    world->SetContactListener(this);
 
+   
+   b2BodyDef groundBodyDef;
+   groundBodyDef.position.Set(0.0f, 0.0f); 
+   ground = world->CreateBody(&groundBodyDef); 
+   
+
    TraceLog(LOG_INFO, "Physics world created successfully",(void*)world); // que nos diga cuando ha creado las fisicas 
 
    return true;
@@ -379,7 +385,7 @@ b2Body* ModulePhysics::CreateChain(int x, int y, int* coordinates, int vertex_co
     body->CreateFixture(&fd);
 
     delete[] vertices;
-
+   
     return body;
 }
 
@@ -446,4 +452,28 @@ void ModulePhysics::BeginContact(b2Contact* contact)
 
         }
     }
+}
+
+b2Body* ModulePhysics::FindBodyAtPosition(b2Vec2 point)
+{
+    if (!world) return nullptr;
+
+    //Iterar
+    for (b2Body* b = world->GetBodyList(); b; b = b->GetNext())
+    {
+        
+        if (b->GetType() != b2_dynamicBody) continue;
+
+        //Iterar sobre las formas
+        for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
+        {
+            
+            if (f->TestPoint(point))
+            {
+                
+                return b;
+            }
+        }
+    }
+    return nullptr;
 }

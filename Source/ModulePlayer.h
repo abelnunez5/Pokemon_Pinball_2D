@@ -55,6 +55,7 @@ private:
     bool canPlunger = true;
     Texture2D ballTexture{};
     Texture2D plungerTexture{};
+    b2MouseJoint* mouse_joint = nullptr;
     int lives;
 
     enum class BallState {
