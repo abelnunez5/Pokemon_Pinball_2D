@@ -69,9 +69,6 @@
     <ClInclude Include="Source\ModulePlayer.h">
       <Filter>Headers\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="DebugLeak.h">
-      <Filter>Headers\Containers</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Headers">

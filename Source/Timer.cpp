@@ -4,7 +4,6 @@
 // ----------------------------------------------------
 
 #include "Timer.h"
-#include "DebugLeak.h"
 #include "raylib.h"
 
 Timer::Timer()

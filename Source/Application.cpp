@@ -1,5 +1,4 @@
 
-#include "DebugLeak.h"
 #include "Module.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
@@ -7,6 +6,34 @@
 #include "ModulePhysics.h"
 #include "ModuleGame.h"
 #include "Application.h"
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// START BLOQUE CRT LEAKS 
+#if defined(_MSC_VER) && defined(_DEBUG)
+#define _CRTDBG_MAP_ALLOC          
+#include <stdlib.h>
+#include <crtdbg.h>
+
+// para que NUNCA de "identifier not found"
+#define ENABLE_CRT_LEAKS()							 \
+do {                                                 \
+int flags = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);     \
+flags |= _CRTDBG_ALLOC_MEM_DF;                       \
+flags |= _CRTDBG_LEAK_CHECK_DF;                      \
+_CrtSetDbgFlag(flags);                               \
+_CrtSetReportMode(_CRT_WARN,  _CRTDBG_MODE_DEBUG);   \
+_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);   \
+_CrtSetReportMode(_CRT_ASSERT,_CRTDBG_MODE_DEBUG);   \
+} while(0)
+
+#define DUMP_CRT_LEAKS() _CrtDumpMemoryLeaks()
+#else
+	// En Release/otros 
+#define ENABLE_CRT_LEAKS()  do{}while(0)
+#define DUMP_CRT_LEAKS()    do{}while(0)
+#endif
+// FIN BLOQUE CRT LEAKS
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 Application::Application()
 {
@@ -49,6 +76,7 @@ Application::~Application()
 bool Application::Init()
 {
 	bool ret = true;
+	ENABLE_CRT_LEAKS();
 
 	// Call Init() in all modules
 	for (auto it = list_modules.begin(); it != list_modules.end() && ret; ++it)
@@ -117,6 +145,7 @@ bool Application::CleanUp()
 		ret = item->CleanUp();
 	}
 	
+	DUMP_CRT_LEAKS();
 	return ret;
 }
 

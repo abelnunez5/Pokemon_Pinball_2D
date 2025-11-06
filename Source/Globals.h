@@ -1,6 +1,5 @@
 #pragma once
 
-#include "DebugLeak.h"
 #include "raylib.h"
 #include <stdio.h>
 
