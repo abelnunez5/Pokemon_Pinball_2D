@@ -105,8 +105,9 @@ bool ModuleAudio::PlayFx(unsigned int id, int repeat)
 
 	if(id < fx_count) PlaySound(fx[id]);
 
-	if(id == 0) isMenuPlaying = true;
-	if(id == 1) isGamePlaying = true;
+	if(id == 0) isMenuMusicPlaying = true;
+	if(id == 1) isGameMusicPlaying = true;
+	if(id == 2) isGameOverMusicPlaying = true;
 
 	return ret;
 }
@@ -122,8 +123,9 @@ bool ModuleAudio::StopFx(unsigned int id)
 
 	if (id < fx_count) StopSound(fx[id]);
 	
-	if (id == 0) isMenuPlaying = false;
-	if (id == 1) isGamePlaying = false;
+	if (id == 0) isMenuMusicPlaying = false;
+	if (id == 1) isGameMusicPlaying = false;
+	if (id == 2) isGameOverMusicPlaying = false;
 
 	return ret;
 }

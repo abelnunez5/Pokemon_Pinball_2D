@@ -3,7 +3,7 @@
 #include "ModulePhysics.h"
 #include "ModuleRender.h"
 #include "raylib.h"
-
+#include <iostream>
 
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled)
@@ -13,7 +13,7 @@ ModulePlayer::ModulePlayer(Application* app, bool start_enabled)
 ModulePlayer::~ModulePlayer() {}
 
 bool ModulePlayer::Start() {
-
+   
 	TraceLog(LOG_INFO, "Player start BGEIN"); // Esta creando los flippers ?
     physics = App->physics;
 
@@ -51,9 +51,9 @@ bool ModulePlayer::Start() {
 
 
     //Bola
-    const float ballx = 10.2f;
-    const float bally = 9.5f;
-    ball = physics->CreateCircleBody(ballx, bally, 0.20f, true);
+    const float ballx = 10.1f;
+    const float bally = 4.0f;
+    ball = physics->CreateCircleBody(ballx, bally, 0.20f, true, BodyType::BALL);
 
     ballTexture = LoadTexture("Assets/pokeball3.png");
     ball->SetBullet(true);
@@ -68,19 +68,7 @@ bool ModulePlayer::Start() {
     plungerTexture = LoadTexture("Assets/Plunger.png");
 
     originalPlungerY = plungery;
-    switch (App->gameStatus) {
-        case 1: {
-
-            break;
-        }
-        case 2: {
-            
-            break;
-        }
-    }
-
-	
-
+   
     return true;
 }
 
@@ -92,9 +80,12 @@ update_status ModulePlayer::Update() {
 
     switch (App->gameStatus) {
     case 1: {
-        if (IsKeyDown(KEY_ENTER) || IsKeyDown(KEY_ENTER)) {
-            App->gameStatus = Application::GameState::GAME;
-            
+        if (!IsKeyReleased(KEY_SPACE) || !IsKeyReleased(KEY_ENTER)) {
+            if (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_ENTER)) {
+                App->gameStatus = Application::GameState::GAME;
+                lives = 1;
+            }
+
         }
 
         break;
@@ -102,7 +93,7 @@ update_status ModulePlayer::Update() {
     case 2: {
         PlungerMovement(dt);
 
-		physics->SetFlipperPressed(leftFlipper, L); // controla el flippers izquierda 
+		physics->SetFlipperPressed(leftFlipper, L); // controla el flippers izquierda
 		physics->SetFlipperPressed(rightFlipper, R); // controla el flippers derecha
 
         // Dibujado de sprites flippers usando el render
@@ -151,9 +142,29 @@ update_status ModulePlayer::Update() {
             velocity *= MAX_SPEED_MS;
             ball->SetLinearVelocity(velocity);
         }
+        std::cout << ball->GetPosition().y << std::endl;
+
+        if (ball->GetPosition().y < 3)
+            canPlunger = false;
+
+        if (ball->GetPosition().y > 18 && lives >= 0) {
+            ball = physics->CreateCircleBody(10.1f, 4.0, 0.20f, true, BodyType::BALL);
+            canPlunger = true;
+            lives--;
+        }
+
+        if (lives == -1)
+            App->gameStatus = Application::GameState::GAMEOVER;
 
         UpdateBallAnimation(dt);
         Draw(dt);
+        break;
+    }
+    case 3: {
+        if (IsKeyReleased(KEY_SPACE) || IsKeyReleased(KEY_ENTER)) {
+            App->gameStatus = Application::GameState::MENU;
+
+        }
         break;
     }
     }
@@ -197,9 +208,9 @@ void ModulePlayer::PlungerMovement(float dt)
     float current_duration_s = 0.0f; 
 
    
-    if (IsKeyDown(KEY_SPACE))
+    if (IsKeyDown(KEY_DOWN))
     {
-        if (IsKeyPressed(KEY_SPACE) && !is_charging)
+        if (IsKeyPressed(KEY_DOWN) && !is_charging)
         {
             is_charging = true;
             start_time = GetTime();
@@ -218,7 +229,7 @@ void ModulePlayer::PlungerMovement(float dt)
     }
 
    
-    else if (IsKeyReleased(KEY_SPACE))
+    else if (IsKeyReleased(KEY_DOWN))
     {
         if (is_charging && !plungerIsShooting)
         {
@@ -255,7 +266,8 @@ void ModulePlayer::PlungerMovement(float dt)
             
             ball->ApplyLinearImpulseToCenter(impulse_vector, true);
 
-            canPlunger = false;
+
+           
 
             return; 
         }
@@ -442,7 +454,7 @@ void ModulePlayer::Draw(float dt) {
 
 
 
-    App->renderer->Draw(plungerTexture, x_pixeles_plunger, y_pixeles_plunger, &sourceRect_p, 0, 25, 160);
+    App->renderer->Draw(plungerTexture, x_pixeles_plunger, y_pixeles_plunger, &sourceRect_p, 0, 25, 150);
     App->physics->RenderDebug();
 }
 
