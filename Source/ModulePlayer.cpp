@@ -44,7 +44,7 @@ bool ModulePlayer::Start() {
     //Bola
     const float ballx = 10.2f;
     const float bally = 9.5f;
-    ball = physics->CreateCircleBody(ballx, bally, 0.20f, true, BodyType::BALL);
+    ball = physics->CreateCircleBody(ballx, bally, 0.20f, true);
 
     ballTexture = LoadTexture("Assets/pokeball3.png");
     ball->SetBullet(true);
@@ -93,42 +93,42 @@ update_status ModulePlayer::Update() {
     case 2: {
         PlungerMovement(dt);
 
-        physics->SetFlipperPressed(leftFlipper, L);
-        physics->SetFlipperPressed(rightFlipper, R);
+		physics->SetFlipperPressed(leftFlipper, L); // controla el flippers izquierda 
+		physics->SetFlipperPressed(rightFlipper, R); // controla el flippers derecha
 
-        // Dibujado de sprites flippers usando el renderer
-        auto drawFlipper = [&](const ModulePhysics::Flipper& f, const Texture2D& tex, bool isLeft)
+        // Dibujado de sprites flippers usando el render
+        auto drawFlipper = [&](const ModulePhysics::Flipper& f, const Texture2D& tex, bool isLeft) 
             {
-                if (!f.anchor || !f.blade || tex.id == 0) return;
+				if (!f.anchor || !f.blade || tex.id == 0) return; // por si acaso
 
-                b2Vec2 ap = f.anchor->GetPosition();
-                float ax = ModulePhysics::M2P(ap.x);
+				b2Vec2 ap = f.anchor->GetPosition(); // posicion del pivote del flipper
+				float ax = ModulePhysics::M2P(ap.x); // posicion en pixeles
                 float ay = ModulePhysics::M2P(ap.y);
-                float angDeg = f.blade->GetAngle() * (180.0f / 3.1415926f);
+				float angDeg = f.blade->GetAngle() * (180.0f / 3.1415926f); // angulo del flipper en grados
 
-                float destW = flLenPx;
+				float destW = flLenPx; // Largo del flipper en píxeles
                 float destH = flThPx;
 
-                float scaleX = destW / (float)tex.width;
-                float scaleY = destH / (float)tex.height;
+				float scaleX = destW / (float)tex.width; // Escalado en X
+				float scaleY = destH / (float)tex.height; // Escalado en Y
 
-                float insetX_dest = (isLeft ? pivotInsetL_texX : pivotInsetR_texX) * scaleX;
+				float insetX_dest = (isLeft ? pivotInsetL_texX : pivotInsetR_texX) * scaleX; // Inserto pivote flipper en destino
                 float insetY_dest = pivotInsetL_texY * scaleY;
 
-                int pivot_x = (int)(isLeft ? (destW - insetX_dest) : insetX_dest);
+				int pivot_x = (int)(isLeft ? (destW - insetX_dest) : insetX_dest); // Posicion pivote X
                 int pivot_y = (int)((destH * 0.5f) + insetY_dest);
 
-                int drawX = (int)(isLeft ? ax - pivot_x : ax);
+				int drawX = (int)(isLeft ? ax - pivot_x : ax); // Posicion de dibujado X
                 int drawY = (int)(ay - pivot_y);
 
-                Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
+				Rectangle src = { 0, 0, (float)tex.width, (float)tex.height }; // Rectangulo fuente (toda la textura)
 
-                App->renderer->Draw(tex, drawX, drawY, &src, angDeg, pivot_x, pivot_y, destW, destH);
+				App->renderer->Draw(tex, drawX, drawY, &src, angDeg, pivot_x, pivot_y, destW, destH); // Dibuja el flipper
             };
 
-        // Llamadas:
-        drawFlipper(leftFlipper, texFlipperL, /*isLeft=*/true);
-        drawFlipper(rightFlipper, texFlipperR, /*isLeft=*/false);
+                                                                // Llamadas:
+		drawFlipper(leftFlipper, texFlipperL, /*isLeft=*/true); // dibuja flipper izquierdo
+		drawFlipper(rightFlipper, texFlipperR, /*isLeft=*/false); // dibuja flipper derecho
 
         const float MAX_SPEED_MS = 20.0f; // Velocidad maxima de la pelota
         const float MAX_SPEED_SQ = MAX_SPEED_MS * MAX_SPEED_MS;
