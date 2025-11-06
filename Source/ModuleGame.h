@@ -30,4 +30,5 @@ public:
 
 	unsigned int sfx_bouncer;
 	unsigned int sfx_pads;
+	unsigned int game_score;
 };

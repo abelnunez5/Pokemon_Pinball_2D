@@ -149,6 +149,7 @@ update_status ModulePlayer::Update() {
 
         if (ball->GetPosition().y > 18 && lives >= 0) {
             ball = physics->CreateCircleBody(10.1f, 4.0, 0.20f, true, BodyType::BALL);
+            App->physics->SetGateClosed(plungerGate, false);
             canPlunger = true;
             lives--;
         }
