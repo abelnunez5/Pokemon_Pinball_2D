@@ -47,11 +47,8 @@ This recreation includes:
 
 
 # ✨Debug Mode ![Glaceon](https://media.tenor.com/PB_v8oFCde4AAAAi/eeveelution-eevee-evolution.gif)
-
- - {Dev01} - {Role(s)}
- - {Dev02} - {Role(s)}
- - {Dev03} - {Role(s)}
- - {Dev04} - {Role(s)}
+- F1 Collisions
+- If **Click** with mouse, Ball control
 
 # ✨Resources ![Leafeon](https://media.tenor.com/2DdMTd9WbCkAAAAi/eeveelution-eevee-evolution.gif)
 
