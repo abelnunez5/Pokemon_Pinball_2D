@@ -45,7 +45,7 @@ public:
 
     void CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px, float restitution = -1.0f, BodyType type = BodyType::BASE);
    
-    struct Flipper 
+	struct Flipper // un flipper con su cuerpo, hoja y junta
     {
         b2Body* anchor = nullptr;
         b2Body* blade  = nullptr;
@@ -59,6 +59,15 @@ public:
                           bool isRight);
 
     void SetFlipperPressed(Flipper& f, bool pressed);
+
+	struct Gate { // una compuerta que puede abrirse y cerrarse
+        b2Body* body = nullptr;
+        b2Fixture* fix = nullptr;   // la fixture de la compuerta
+        bool       closed = false;     // estado actual
+    };
+
+    Gate CreateGate(float xPx, float yPx, float wPx, float hPx); // crea “pared” inicialmente abierta (sensor)
+    void SetGateClosed(Gate& g, bool closed);
 
 private:
     b2World* world = nullptr;
