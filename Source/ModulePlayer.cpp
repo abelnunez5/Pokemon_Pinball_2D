@@ -74,7 +74,7 @@ update_status ModulePlayer::Update() {
         if (!IsKeyReleased(KEY_SPACE) || !IsKeyReleased(KEY_ENTER)) {
             if (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_ENTER)) {
                 App->gameStatus = Application::GameState::GAME;
-                lives = 0;
+                lives = 1;
             }
 
         }
@@ -84,7 +84,7 @@ update_status ModulePlayer::Update() {
     case 2: {
         PlungerMovement(dt);
 
-		physics->SetFlipperPressed(leftFlipper, L); // controla el flippers izquierda 
+		physics->SetFlipperPressed(leftFlipper, L); // controla el flippers izquierda
 		physics->SetFlipperPressed(rightFlipper, R); // controla el flippers derecha
 
         // Dibujado de sprites flippers usando el render
@@ -139,7 +139,7 @@ update_status ModulePlayer::Update() {
             canPlunger = false;
 
         if (ball->GetPosition().y > 18 && lives >= 0) {
-            ball = physics->CreateCircleBody(10.2f, 9.5f, 0.20f, true, BodyType::BALL);
+            ball = physics->CreateCircleBody(10.1f, 4.0, 0.20f, true, BodyType::BALL);
             canPlunger = true;
             lives--;
         }
@@ -184,9 +184,9 @@ void ModulePlayer::PlungerMovement(float dt)
     float current_duration_s = 0.0f; 
 
    
-    if (IsKeyDown(KEY_SPACE))
+    if (IsKeyDown(KEY_DOWN))
     {
-        if (IsKeyPressed(KEY_SPACE) && !is_charging)
+        if (IsKeyPressed(KEY_DOWN) && !is_charging)
         {
             is_charging = true;
             start_time = GetTime();
@@ -205,7 +205,7 @@ void ModulePlayer::PlungerMovement(float dt)
     }
 
    
-    else if (IsKeyReleased(KEY_SPACE))
+    else if (IsKeyReleased(KEY_DOWN))
     {
         if (is_charging && !plungerIsShooting)
         {
