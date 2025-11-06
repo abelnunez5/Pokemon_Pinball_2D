@@ -40,6 +40,7 @@ public:
     void Draw(float dt);
 	void DrawFlippers();
     bool CleanUp() override;
+    int lives;
 
 private:
 
@@ -56,7 +57,6 @@ private:
     Texture2D ballTexture{};
     Texture2D plungerTexture{};
     b2MouseJoint* mouse_joint = nullptr;
-    int lives;
 
     enum class BallState {
         RECTA,

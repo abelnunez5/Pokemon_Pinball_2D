@@ -22,7 +22,7 @@ bool ModuleGame::Start()
 
 	tableroMenu = LoadTexture("Assets/Start Screen/TitleScreen_v2_scaled_3x.png");
 	tableroGame = LoadTexture("Assets/PokemonPinball_Map.png");
-	gameOverScreen = LoadTexture("Assets/GameOver_Screen.png");
+	gameOverScreen = LoadTexture("Assets/GameOver_Screen_v2.png");
 
 	App->audio->LoadFx("Assets/Audio/01 Title Screen.wav");
 	App->audio->LoadFx("Assets/Audio/05 Red Field Theme.wav");
@@ -88,6 +88,11 @@ update_status ModuleGame::Update()
 		case 2: {
 			//GAME
 			App->renderer->Draw(tableroGame, 0, 0, 0, 0, 0, 0);
+			DrawText(TextFormat("Score: %d", App->scene_intro->current_game_score), 176, 506, 18, BLACK);
+			DrawText(TextFormat("Top Score: %d", App->scene_intro->top_game_score), 176, 526, 18, BLACK);
+			DrawText(TextFormat("Max Score: %d", App->scene_intro->max_game_score), 176, 546, 18, BLACK);
+			DrawText(TextFormat("Lives: %d", App->player->lives), 176, 566, 18, BLACK);
+
 			App->audio->StopFx(0);
 			if(!App->audio->isGameMusicPlaying)
 				App->audio->PlayFx(1, 1);

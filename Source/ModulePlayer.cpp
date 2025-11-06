@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "ModuleRender.h"
+#include "ModuleGame.h"
 #include "raylib.h"
 #include <iostream>
 
@@ -183,20 +184,30 @@ update_status ModulePlayer::Update() {
             velocity *= MAX_SPEED_MS;
             ball->SetLinearVelocity(velocity);
         }
-        std::cout << ball->GetPosition().y << std::endl;
 
         if (ball->GetPosition().y < 3)
             canPlunger = false;
 
         if (ball->GetPosition().y > 18 && lives >= 0) {
+
+            if (App->scene_intro->top_game_score < App->scene_intro->current_game_score)
+                App->scene_intro->top_game_score = App->scene_intro->current_game_score;
+
+            App->scene_intro->current_game_score = 0;
             ball = physics->CreateCircleBody(10.1f, 4.0, 0.20f, true, BodyType::BALL);
             App->physics->SetGateClosed(plungerGate, false);
             canPlunger = true;
             lives--;
         }
 
-        if (lives == -1)
+        if (lives == -1) {
+            if (App->scene_intro->max_game_score < App->scene_intro->top_game_score)
+                App->scene_intro->max_game_score = App->scene_intro->top_game_score;
+
+            App->scene_intro->top_game_score = 0;
+
             App->gameStatus = Application::GameState::GAMEOVER;
+        }
 
         UpdateBallAnimation(dt);
         Draw(dt);

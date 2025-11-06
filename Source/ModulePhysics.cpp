@@ -5,6 +5,7 @@
 #include "raylib.h"
 
 #include "ModuleAudio.h"
+#include <iostream>
 
 // Constructor / Destructor
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled)
@@ -437,6 +438,15 @@ void ModulePhysics::BeginContact(b2Contact* contact)
         if (App->scene_intro) 
         {
             App->audio->PlayFx(App->scene_intro->sfx_bouncer - 1);
+            App->scene_intro->current_game_score += 25;
+            App->scene_intro->bonus_live_counter++;
+
+            if (App->scene_intro->bonus_live_counter == 10) {
+                App->player->lives++;
+                App->scene_intro->bonus_live_counter = 0;
+            }
+
+            std::cout << App->scene_intro->current_game_score << std::endl;
 
             LOG("Colision detectada: BOUNCER");
         }

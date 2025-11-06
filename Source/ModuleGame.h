@@ -31,5 +31,9 @@ public:
 
 	unsigned int sfx_bouncer;
 	unsigned int sfx_pads;
-	unsigned int game_score;
+
+	unsigned int max_game_score = 0;
+	unsigned int top_game_score = 0;
+	unsigned int current_game_score = 0;
+	unsigned int bonus_live_counter = 0;
 };
