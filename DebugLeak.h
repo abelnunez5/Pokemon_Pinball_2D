@@ -1,14 +1,12 @@
 #pragma once
 
-// --- SOLO MSVC en configuración Debug ---
+
 #if defined(_MSC_VER) && defined(_DEBUG)
 
-  // Define ANTES de stdlib.h para que el CRT redirija malloc/free/new a la versión de depuración
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
 
-// Opción: etiqueta cada 'new' con archivo y línea (no afecta a placement-new)
 #ifndef DBG_NEW
 #define DBG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #define new DBG_NEW
@@ -36,7 +34,7 @@ inline void DumpLeaksNow()
 }
 
 #else
-  // En Release / otros compiladores: funciones vacías
+  // En Release / otros compiladores
 inline void EnableCrtLeakChecks() {}
 inline void DumpLeaksNow() {}
 #endif
