@@ -2,7 +2,7 @@
 
 # ✨Description ![evee](https://media.tenor.com/sj3IHPPDOxEAAAAi/eevee-eevee-evolution.gif)
 
-Recreation of Pokemon Pinball for the Game Boy. This recreation is made on a surface level compared with the original one, meaning that many features are not included, as more than one map.
+Recreation of Pokémon Pinball for the Game Boy. This recreation is made on a surface level compared with the original one, meaning that many features are not included, as more than one map.
 
 This recreation includes:
 
