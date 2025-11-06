@@ -255,6 +255,47 @@ b2Body* ModulePhysics::CreateBoxBody(float mx, float my, float mw, float mh, boo
     return body;
 }
 
+ModulePhysics::Gate ModulePhysics::CreateGate(float xPx, float yPx, float wPx, float hPx) // crea “pared” inicialmente abierta (sensor)
+{
+    Gate g;
+
+    b2BodyDef bd;
+    bd.type = b2_staticBody;
+    bd.position.Set(P2M(xPx), P2M(yPx));
+
+    g.body = world->CreateBody(&bd);
+
+    b2PolygonShape box;
+    // SetAsBox(halfWidth, halfHeight) en METROS, centrado en el body
+    box.SetAsBox(P2M(wPx * 0.5f), P2M(hPx * 0.5f));
+
+    b2FixtureDef fd;
+    fd.shape = &box;
+    fd.density = 0.0f;
+    fd.friction = 0.1f;
+    fd.restitution = 0.0f;
+
+    // Que SOLO afecte a la bola (no a flippers, etc.)
+    fd.filter.categoryBits = CAT_TABLE;          // la tratamos como “pared”
+    fd.filter.maskBits = CAT_BALL;           // solo la bola colisiona
+
+    fd.isSensor = true;                           // *** abierta al inicio ***
+    g.fix = g.body->CreateFixture(&fd);
+    g.closed = false;
+
+    return g;
+}
+
+void ModulePhysics::SetGateClosed(Gate& g, bool closed) // abre/cierra la compuerta
+{
+    if (!g.fix) return;
+    g.fix->SetSensor(!closed);    // sensor=false => sólida; sensor=true => abierta
+    g.closed = closed;
+
+    // Por si la bola está dormida cuando cerremos/abramos
+    if (g.body) g.body->SetAwake(true);
+}
+
 void ModulePhysics::DestroyBody(b2Body* body)
 {
     if (world && body) world->DestroyBody(body);

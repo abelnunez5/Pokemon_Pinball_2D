@@ -23,9 +23,11 @@ public:
 	ModulePhysics* physics;
 	ModuleGame* scene_intro;
 	ModulePlayer* player;
+
 	enum GameState : uint16 {
 		MENU = 1,
-		GAME = 2
+		GAME = 2,
+		GAMEOVER = 3
 	};
 
 

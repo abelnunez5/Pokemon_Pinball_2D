@@ -3,7 +3,7 @@
 #include "ModulePhysics.h"
 #include "ModuleRender.h"
 #include "raylib.h"
-
+#include <iostream>
 
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled)
@@ -40,6 +40,15 @@ bool ModulePlayer::Start() {
     TraceLog(LOG_INFO, "Right flipper: anchor=%p blade=%p joint=%p",
         (void*)rightFlipper.anchor, (void*)rightFlipper.blade, (void*)rightFlipper.joint); // que nos diga las posiciones de los flippers en consola
 
+    const float gateX = 437.0f; // posicion de la compuerta del plunger
+	const float gateY = 110.0f; // posicion de la compuerta del plunger
+    const float gateW = 6.0f;   // grosor de la pared (fina)
+    const float gateH = 60.0f;  // alto que cubra el hueco
+
+    plungerGate = App->physics->CreateGate(gateX, gateY, gateW, gateH); // empieza abierta (sensor=true)
+    gateCreated = true;
+    gateClosed = false;
+
 
     //Bola
     const float ballx = 10.1f;
@@ -59,19 +68,7 @@ bool ModulePlayer::Start() {
     plungerTexture = LoadTexture("Assets/Plunger.png");
 
     originalPlungerY = plungery;
-    switch (App->gameStatus) {
-        case 1: {
-
-            break;
-        }
-        case 2: {
-            
-            break;
-        }
-    }
-
-	
-
+   
     return true;
 }
 
@@ -83,9 +80,12 @@ update_status ModulePlayer::Update() {
 
     switch (App->gameStatus) {
     case 1: {
-        if (IsKeyDown(KEY_ENTER) || IsKeyDown(KEY_ENTER)) {
-            App->gameStatus = Application::GameState::GAME;
-            
+        if (!IsKeyReleased(KEY_SPACE) || !IsKeyReleased(KEY_ENTER)) {
+            if (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_ENTER)) {
+                App->gameStatus = Application::GameState::GAME;
+                lives = 1;
+            }
+
         }
 
         break;
@@ -93,7 +93,7 @@ update_status ModulePlayer::Update() {
     case 2: {
         PlungerMovement(dt);
 
-		physics->SetFlipperPressed(leftFlipper, L); // controla el flippers izquierda 
+		physics->SetFlipperPressed(leftFlipper, L); // controla el flippers izquierda
 		physics->SetFlipperPressed(rightFlipper, R); // controla el flippers derecha
 
         // Dibujado de sprites flippers usando el render
@@ -126,7 +126,7 @@ update_status ModulePlayer::Update() {
 				App->renderer->Draw(tex, drawX, drawY, &src, angDeg, pivot_x, pivot_y, destW, destH); // Dibuja el flipper
             };
 
-                                                                // Llamadas:
+        // Llamadas:
 		drawFlipper(leftFlipper, texFlipperL, /*isLeft=*/true); // dibuja flipper izquierdo
 		drawFlipper(rightFlipper, texFlipperR, /*isLeft=*/false); // dibuja flipper derecho
 
@@ -183,11 +183,46 @@ update_status ModulePlayer::Update() {
             velocity *= MAX_SPEED_MS;
             ball->SetLinearVelocity(velocity);
         }
+        std::cout << ball->GetPosition().y << std::endl;
+
+        if (ball->GetPosition().y < 3)
+            canPlunger = false;
+
+        if (ball->GetPosition().y > 18 && lives >= 0) {
+            ball = physics->CreateCircleBody(10.1f, 4.0, 0.20f, true, BodyType::BALL);
+            App->physics->SetGateClosed(plungerGate, false);
+            canPlunger = true;
+            lives--;
+        }
+
+        if (lives == -1)
+            App->gameStatus = Application::GameState::GAMEOVER;
 
         UpdateBallAnimation(dt);
         Draw(dt);
         break;
     }
+    case 3: {
+        if (IsKeyReleased(KEY_SPACE) || IsKeyReleased(KEY_ENTER)) {
+            App->gameStatus = Application::GameState::MENU;
+
+        }
+        break;
+    }
+    }
+    // --- Control de compuerta del resorte ---
+    if (gateCreated && !gateClosed && ball)
+    {
+        const float bx = ModulePhysics::M2P(ball->GetPosition().x);
+        const float by = ModulePhysics::M2P(ball->GetPosition().y);
+		const b2Vec2 v = ball->GetLinearVelocity();
+
+		const float margin = 4.0f; // margen de seguridad en píxeles
+        
+        if (bx < gateX - margin && v.x < -0.5f) {// si la bola ha pasado la compuerta (y está por encima)
+            App->physics->SetGateClosed(plungerGate, true);
+            gateClosed = true;
+        }
     }
 
     
@@ -215,9 +250,9 @@ void ModulePlayer::PlungerMovement(float dt)
     float current_duration_s = 0.0f; 
 
    
-    if (IsKeyDown(KEY_SPACE))
+    if (IsKeyDown(KEY_DOWN))
     {
-        if (IsKeyPressed(KEY_SPACE) && !is_charging)
+        if (IsKeyPressed(KEY_DOWN) && !is_charging)
         {
             is_charging = true;
             start_time = GetTime();
@@ -236,7 +271,7 @@ void ModulePlayer::PlungerMovement(float dt)
     }
 
    
-    else if (IsKeyReleased(KEY_SPACE))
+    else if (IsKeyReleased(KEY_DOWN))
     {
         if (is_charging && !plungerIsShooting)
         {
@@ -273,7 +308,8 @@ void ModulePlayer::PlungerMovement(float dt)
             
             ball->ApplyLinearImpulseToCenter(impulse_vector, true);
 
-            canPlunger = false;
+
+           
 
             return; 
         }

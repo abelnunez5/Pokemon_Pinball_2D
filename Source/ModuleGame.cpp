@@ -25,6 +25,7 @@ bool ModuleGame::Start()
 
 	App->audio->LoadFx("Assets/Audio/01 Title Screen.wav");
 	App->audio->LoadFx("Assets/Audio/05 Red Field Theme.wav");
+	App->audio->LoadFx("Assets/Audio/19 Game Over.wav");
 
 	sfx_bouncer = App->audio->LoadFx("Assets/Audio/SFX/Shellder_SFX.ogg");
 	sfx_pads = App->audio->LoadFx("Assets/Audio/SFX/Pad_SFX.ogg");
@@ -59,7 +60,6 @@ bool ModuleGame::Start()
 
 	//	Psyduck
 	App->physics->CreateCircleBody(ModulePhysics::P2M(408.0f), ModulePhysics::P2M(534.0f), ModulePhysics::P2M(24.0f), false);
-	App->audio->PlayFx(0, 1);
 
 	return ret;
 }
@@ -79,15 +79,24 @@ update_status ModuleGame::Update()
 		case 1: {
 			//MENU
 			App->renderer->Draw(tableroMenu, 48, 70, 0, 0, 0, 0);
-			
+			App->audio->StopFx(2);
+			if (!App->audio->isMenuMusicPlaying)
+				App->audio->PlayFx(0, 1);
 			break;
 		}
 		case 2: {
 			//GAME
 			App->renderer->Draw(tableroGame, 0, 0, 0, 0, 0, 0);
 			App->audio->StopFx(0);
-			if(!App->audio->isGamePlaying)
+			if(!App->audio->isGameMusicPlaying)
 				App->audio->PlayFx(1, 1);
+
+			break;
+		}
+		case 3: {
+			App->audio->StopFx(1);
+			if (!App->audio->isGameOverMusicPlaying)
+				App->audio->PlayFx(2, 1);
 
 			break;
 		}
