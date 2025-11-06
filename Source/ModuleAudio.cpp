@@ -105,5 +105,25 @@ bool ModuleAudio::PlayFx(unsigned int id, int repeat)
 
 	if(id < fx_count) PlaySound(fx[id]);
 
+	if(id == 0) isMenuPlaying = true;
+	if(id == 1) isGamePlaying = true;
+
+	return ret;
+}
+
+bool ModuleAudio::StopFx(unsigned int id)
+{
+	if (IsEnabled() == false)
+	{
+		return false;
+	}
+
+	bool ret = false;
+
+	if (id < fx_count) StopSound(fx[id]);
+	
+	if (id == 0) isMenuPlaying = false;
+	if (id == 1) isGamePlaying = false;
+
 	return ret;
 }

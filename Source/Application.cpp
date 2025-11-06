@@ -66,6 +66,8 @@ bool Application::Init()
 		ret = module->Start();
 	}
 	
+	SetTargetFPS(60);
+
 	return ret;
 }
 

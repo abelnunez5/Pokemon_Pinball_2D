@@ -40,7 +40,7 @@ update_status ModulePhysics::PostUpdate()
 {
     if (IsKeyPressed(KEY_F1)) 
         debug = !debug;
-	TraceLog(LOG_INFO, "Physics debug: %s", debug ? "ON" : "OFF"); //que nos diga si estan encendidas o apagadas 
+	//TraceLog(LOG_INFO, "Physics debug: %s", debug ? "ON" : "OFF"); //que nos diga si estan encendidas o apagadas 
 
     if (debug && world) {
         DebugDrawWorld();
@@ -200,8 +200,6 @@ b2Body* ModulePhysics::CreateCircleBody(float mx, float my, float mr, bool dynam
     body->CreateFixture(&fd);
     return body;
 }
-
- 
 
 b2Body* ModulePhysics::CreateBoxBody(float mx, float my, float mw, float mh, bool dynamic, float angleRad)
 {

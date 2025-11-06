@@ -11,7 +11,6 @@
 class PhysBody;
 class PhysicEntity;
 
-
 class ModuleGame : public Module
 {
 public:
@@ -27,5 +26,6 @@ public:
 
 	std::vector<PhysicEntity*> entities;
 
-	Texture2D tablero;
+	Texture2D tableroMenu;
+	Texture2D tableroGame;
 };

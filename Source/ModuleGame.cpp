@@ -20,7 +20,11 @@ bool ModuleGame::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	tablero = LoadTexture("Assets/PokemonPinball_Map.png");
+	tableroMenu = LoadTexture("Assets/Start Screen/TitleScreen_v2_scaled_3x.png");
+	tableroGame = LoadTexture("Assets/PokemonPinball_Map.png");
+
+	App->audio->LoadFx("Assets/Audio/01 Title Screen.wav");
+	App->audio->LoadFx("Assets/Audio/05 Red Field Theme.wav");
 
 	//	Paredes
 	float wall_thickness = 4.0f; // 4 píxeles de grosor
@@ -48,6 +52,7 @@ bool ModuleGame::Start()
 
 	//	Psyduck
 	App->physics->CreateCircleBody(ModulePhysics::P2M(408.0f), ModulePhysics::P2M(534.0f), ModulePhysics::P2M(24.0f), false);
+	App->audio->PlayFx(0, 1);
 
 	return ret;
 }
@@ -63,8 +68,26 @@ bool ModuleGame::CleanUp()
 // Update: draw background
 update_status ModuleGame::Update()
 {
-	App->renderer->Draw(tablero, 0,0, 0, 0,0,0);
+	switch (App->gameStatus) {
+		case 1: {
+			//MENU
+			App->renderer->Draw(tableroMenu, 48, 70, 0, 0, 0, 0);
+			
+			break;
+		}
+		case 2: {
+			//GAME
+			App->renderer->Draw(tableroGame, 0, 0, 0, 0, 0, 0);
+			App->audio->StopFx(0);
+			if(!App->audio->isGamePlaying)
+				App->audio->PlayFx(1, 1);
+
+			break;
+	}
+	}
+
 	App->physics->RenderDebug();
+
 
 	return UPDATE_CONTINUE;
 }

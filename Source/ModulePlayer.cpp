@@ -20,7 +20,7 @@ bool ModulePlayer::Start() {
 	TraceLog(LOG_INFO, "App->physics=%p", (void*)physics); //en que punto lo hace ?
     if (!physics) return true;
 
-// Coordenadas medidas directamente sobre la textura (en píxeles):
+    // Coordenadas medidas directamente sobre la textura (en píxeles):
     const float leftPivotPxX = 163.0f;
     const float leftPivotPxY = 772.0f;
     const float rightPivotPxX = 318.0f;
@@ -28,26 +28,25 @@ bool ModulePlayer::Start() {
 
     const float flLenPx = 65.0f;
     const float flThPx = 18.0f;
+    
+    leftFlipper = physics->CreateFlipper(leftPivotPxX, leftPivotPxY, flLenPx, flThPx, true); // crea flipper izquierdo
+    rightFlipper = physics->CreateFlipper(rightPivotPxX, rightPivotPxY, flLenPx, flThPx, false); // crea flipper derecho
 
-	leftFlipper = physics->CreateFlipper(leftPivotPxX, leftPivotPxY, flLenPx, flThPx, true); // crea flipper izquierdo
-	rightFlipper = physics->CreateFlipper(rightPivotPxX, rightPivotPxY, flLenPx, flThPx, false); // crea flipper derecho
-
-	texFlipperL = LoadTexture("Assets/Palanca_Izda_24x9.png"); // carga textura flipper izquierdo
-	texFlipperR = LoadTexture("Assets/Palanca_Dcha_24x9.png"); // carga textura flipper derecho
+    texFlipperL = LoadTexture("Assets/Palanca_Izda_24x9.png"); // carga textura flipper izquierdo
+    texFlipperR = LoadTexture("Assets/Palanca_Dcha_24x9.png"); // carga textura flipper derecho
 
     TraceLog(LOG_INFO, "Left flipper:  anchor=%p blade=%p joint=%p",
-		(void*)leftFlipper.anchor, (void*)leftFlipper.blade, (void*)leftFlipper.joint);  // que nos diga las posiciones de los flippers en consola
+        (void*)leftFlipper.anchor, (void*)leftFlipper.blade, (void*)leftFlipper.joint);  // que nos diga las posiciones de los flippers en consola
     TraceLog(LOG_INFO, "Right flipper: anchor=%p blade=%p joint=%p",
-		(void*)rightFlipper.anchor, (void*)rightFlipper.blade, (void*)rightFlipper.joint); // que nos diga las posiciones de los flippers en consola
+        (void*)rightFlipper.anchor, (void*)rightFlipper.blade, (void*)rightFlipper.joint); // que nos diga las posiciones de los flippers en consola
 
 
     //Bola
     const float ballx = 10.2f;
     const float bally = 9.5f;
+    ball = physics->CreateCircleBody(ballx, bally, 0.20f, true);
 
     ballTexture = LoadTexture("Assets/pokeball3.png");
-    ball = physics->CreateCircleBody(ballx,bally,0.20f,true);
-
     ball->SetBullet(true);
 
     //Plunger
@@ -56,10 +55,22 @@ bool ModulePlayer::Start() {
     const float plungerw = 1.0f;
     const float plungerh = 6.5f;
 
-    plungerTexture = LoadTexture("Assets/Plunger.png");
     plunger = physics->CreateBoxBody(plungerx, plungery, plungerw, plungerh, false, 0.0f);
+    plungerTexture = LoadTexture("Assets/Plunger.png");
 
-    originalPlungerY = plungery; 
+    originalPlungerY = plungery;
+    switch (App->gameStatus) {
+        case 1: {
+
+            break;
+        }
+        case 2: {
+            
+            break;
+        }
+    }
+
+	
 
     return true;
 }
@@ -70,60 +81,75 @@ update_status ModulePlayer::Update() {
     bool L = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
     bool R = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
 
-    PlungerMovement(dt); //aqui
+    switch (App->gameStatus) {
+    case 1: {
+        if (IsKeyDown(KEY_ENTER) || IsKeyDown(KEY_ENTER)) {
+            App->gameStatus = Application::GameState::GAME;
+            
+        }
 
-    physics->SetFlipperPressed(leftFlipper, L);
-    physics->SetFlipperPressed(rightFlipper, R);
+        break;
+    }
+    case 2: {
+        PlungerMovement(dt);
 
-    // Dibujado de sprites flippers usando el renderer
-    auto drawFlipper = [&](const ModulePhysics::Flipper& f, const Texture2D& tex, bool isLeft)
+        physics->SetFlipperPressed(leftFlipper, L);
+        physics->SetFlipperPressed(rightFlipper, R);
+
+        // Dibujado de sprites flippers usando el renderer
+        auto drawFlipper = [&](const ModulePhysics::Flipper& f, const Texture2D& tex, bool isLeft)
+            {
+                if (!f.anchor || !f.blade || tex.id == 0) return;
+
+                b2Vec2 ap = f.anchor->GetPosition();
+                float ax = ModulePhysics::M2P(ap.x);
+                float ay = ModulePhysics::M2P(ap.y);
+                float angDeg = f.blade->GetAngle() * (180.0f / 3.1415926f);
+
+                float destW = flLenPx;
+                float destH = flThPx;
+
+                float scaleX = destW / (float)tex.width;
+                float scaleY = destH / (float)tex.height;
+
+                float insetX_dest = (isLeft ? pivotInsetL_texX : pivotInsetR_texX) * scaleX;
+                float insetY_dest = pivotInsetL_texY * scaleY;
+
+                int pivot_x = (int)(isLeft ? (destW - insetX_dest) : insetX_dest);
+                int pivot_y = (int)((destH * 0.5f) + insetY_dest);
+
+                int drawX = (int)(isLeft ? ax - pivot_x : ax);
+                int drawY = (int)(ay - pivot_y);
+
+                Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
+
+                App->renderer->Draw(tex, drawX, drawY, &src, angDeg, pivot_x, pivot_y, destW, destH);
+            };
+
+        // Llamadas:
+        drawFlipper(leftFlipper, texFlipperL, /*isLeft=*/true);
+        drawFlipper(rightFlipper, texFlipperR, /*isLeft=*/false);
+
+        const float MAX_SPEED_MS = 20.0f; // Velocidad maxima de la pelota
+        const float MAX_SPEED_SQ = MAX_SPEED_MS * MAX_SPEED_MS;
+
+        b2Vec2 velocity = ball->GetLinearVelocity();
+        float speedSqr = velocity.LengthSquared();
+
+        if (speedSqr > MAX_SPEED_SQ)
         {
-            if (!f.anchor || !f.blade || tex.id == 0) return;
+            velocity.Normalize();
+            velocity *= MAX_SPEED_MS;
+            ball->SetLinearVelocity(velocity);
+        }
 
-            b2Vec2 ap = f.anchor->GetPosition();
-            float ax = ModulePhysics::M2P(ap.x);
-            float ay = ModulePhysics::M2P(ap.y);
-            float angDeg = f.blade->GetAngle() * (180.0f / 3.1415926f);
-
-            float destW = flLenPx;
-            float destH = flThPx;
-
-            float scaleX = destW / (float)tex.width;
-            float scaleY = destH / (float)tex.height;
-
-            float insetX_dest = (isLeft ? pivotInsetL_texX : pivotInsetL_texX) * scaleX;
-            float insetY_dest = pivotInsetL_texY * scaleY;
-
-            int pivot_x = (int)(isLeft ? (destW - insetX_dest) : ( insetX_dest));
-            int pivot_y = (int)((destH * 0.5f) + insetY_dest);
-
-            int drawX = (int)(isLeft ? ax - pivot_x : ax   );
-            int drawY = (int)(ay - pivot_y);
-
-            Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
-
-            App->renderer->Draw(tex, drawX, drawY, &src, angDeg, pivot_x, pivot_y, destW, destH);
-        };
-
-    // Llamadas:
-    drawFlipper(leftFlipper, texFlipperL, /*isLeft=*/true);
-    drawFlipper(rightFlipper, texFlipperR, /*isLeft=*/false);
-
-    const float MAX_SPEED_MS = 20.0f; // Velocidad maxima de la pelota
-    const float MAX_SPEED_SQ = MAX_SPEED_MS * MAX_SPEED_MS;
-
-    b2Vec2 velocity = ball->GetLinearVelocity();
-    float speedSqr = velocity.LengthSquared();
-
-    if (speedSqr > MAX_SPEED_SQ)
-    {
-        velocity.Normalize();
-        velocity *= MAX_SPEED_MS;
-        ball->SetLinearVelocity(velocity);
+        UpdateBallAnimation(dt);
+        Draw(dt);
+        break;
+    }
     }
 
-    UpdateBallAnimation(dt);    
-    Draw(dt);
+    
     return UPDATE_CONTINUE;
 }
 

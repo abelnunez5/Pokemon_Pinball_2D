@@ -50,7 +50,7 @@ public:
 
 private:
     b2World* world = nullptr;
-    bool     debug = true;
+    bool     debug = false;
 
     double accumulator = 0.0;
     static constexpr float STEP = 1.0f / 60.0f;
