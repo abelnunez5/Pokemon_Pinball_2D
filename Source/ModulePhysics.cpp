@@ -390,6 +390,8 @@ void ModulePhysics::BeginContact(b2Contact* contact)
         if (App->scene_intro) 
         {
             App->audio->PlayFx(App->scene_intro->sfx_bouncer - 1);
+
+            LOG("Colision detectada: BOUNCER");
         }
     }
 
@@ -398,6 +400,9 @@ void ModulePhysics::BeginContact(b2Contact* contact)
         if (App->scene_intro)
         {
             App->audio->PlayFx(App->scene_intro->sfx_pads - 1);
+
+            LOG("Colision detectada: PAD");
+
         }
     }
 }
