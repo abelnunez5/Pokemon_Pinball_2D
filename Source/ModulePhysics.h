@@ -22,7 +22,7 @@ public:
 
     // Helpers simples
     b2Body* CreateCircleBody(float mx, float my, float mr, bool dynamic);
-    b2Body* CreateBoxBody(float mx, float my, float mw, float mh, bool dynamic, float angleRad = 0.0f);
+    b2Body* CreateBoxBody(float mx, float my, float mw, float mh, bool dynamic, float angleRad = 0.0f, float restitution = -1.0f);
     void    DestroyBody(b2Body* body);
     Vector2 GetBodyPosition(b2Body* body) const;
 
@@ -31,7 +31,7 @@ public:
 
     b2Body* CreateChain(int x, int y, int* coordinates, int vertex_count); // Crear cadenas a partir de coords en pixeles
 
-    void CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px);
+    void CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px, float restitution = -1.0f);
    
     struct Flipper 
     {

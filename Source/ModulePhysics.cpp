@@ -194,20 +194,43 @@ b2Body* ModulePhysics::CreateCircleBody(float mx, float my, float mr, bool dynam
     b2BodyDef bd; bd.type = dynamic ? b2_dynamicBody : b2_staticBody; bd.position.Set(mx, my);
     b2Body* body = world->CreateBody(&bd);
     b2CircleShape sh; sh.m_radius = mr;
-    b2FixtureDef fd; fd.shape = &sh; fd.density = dynamic ? 1.0f : 0.0f; fd.friction = 0.2f; fd.restitution = 0.5f;
-	fd.filter.categoryBits = CAT_BALL;
-	fd.filter.maskBits = CAT_TABLE | CAT_FLIPPER;
+    b2FixtureDef fd; fd.shape = &sh; fd.density = dynamic ? 1.0f : 0.0f; fd.friction = 0.2f; 
+
+    if (dynamic)    // En caso de que el circulo sea el player
+    {
+        fd.restitution = 0.5f;
+        fd.filter.categoryBits = CAT_BALL;
+        fd.filter.maskBits = CAT_TABLE | CAT_FLIPPER;
+    }
+    else    // Si no será un bouncer
+    {
+        fd.restitution = 1.5f;
+        fd.filter.categoryBits = CAT_TABLE;
+        fd.filter.maskBits = CAT_BALL;
+    }
+	
     body->CreateFixture(&fd);
+
     return body;
 }
 
-b2Body* ModulePhysics::CreateBoxBody(float mx, float my, float mw, float mh, bool dynamic, float angleRad)
+b2Body* ModulePhysics::CreateBoxBody(float mx, float my, float mw, float mh, bool dynamic, float angleRad, float restitution)
 {
     if (!world) return nullptr;
     b2BodyDef bd; bd.type = dynamic ? b2_dynamicBody : b2_staticBody; bd.position.Set(mx, my); bd.angle = angleRad;
     b2Body* body = world->CreateBody(&bd);
     b2PolygonShape sh; sh.SetAsBox(mw * 0.5f, mh * 0.5f);
     b2FixtureDef fd; fd.shape = &sh; fd.density = dynamic ? 1.0f : 0.0f; fd.friction = 0.5f; fd.restitution = dynamic ? 0.2f : 0.0f;
+
+    if (restitution == -1.0f)
+    {
+        fd.restitution = dynamic ? 0.2f : 0.0f;
+    }
+    else
+    {
+        fd.restitution = restitution;
+    }
+
 	if (!dynamic) {fd.filter.categoryBits = CAT_TABLE;
     fd.filter.maskBits = CAT_BALL;
 	}
@@ -308,7 +331,7 @@ b2Body* ModulePhysics::CreateChain(int x, int y, int* coordinates, int vertex_co
     return body;
 }
 
-void ModulePhysics::CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px)
+void ModulePhysics::CreateThickerChain(int x, int y, int* coordinates, int vertex_count, float thickness_px, float restitution)
 {
     if (!world) return;
 
@@ -334,6 +357,6 @@ void ModulePhysics::CreateThickerChain(int x, int y, int* coordinates, int verte
         float center_my = P2M(center_y_px);
         float length_m = P2M(length_px);
 
-        CreateBoxBody(center_mx, center_my, length_m, thickness_m, false, angle_rad);
+        CreateBoxBody(center_mx, center_my, length_m, thickness_m, false, angle_rad, restitution);
     }
 }

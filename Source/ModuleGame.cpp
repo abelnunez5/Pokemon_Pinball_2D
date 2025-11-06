@@ -28,6 +28,7 @@ bool ModuleGame::Start()
 
 	//	Paredes
 	float wall_thickness = 4.0f; // 4 píxeles de grosor
+	float wall_restitution = 1.25f; // Cambiar esto poara que la bola rebote más
 
 	App->physics->CreateThickerChain(0, 0, Main_Wall, 24, wall_thickness);
 	App->physics->CreateThickerChain(0, 0, Right_Wall, 16, wall_thickness);
@@ -35,8 +36,8 @@ bool ModuleGame::Start()
 	App->physics->CreateThickerChain(0, 0, Cloyster_Wall, 24, wall_thickness);
 	App->physics->CreateThickerChain(0, 0, GreenWall_L, 7, wall_thickness);
 	App->physics->CreateThickerChain(0, 0, GreenWall_R, 7, wall_thickness);
-	App->physics->CreateThickerChain(0, 0, Pad_L, 4, wall_thickness);
-	App->physics->CreateThickerChain(0, 0, Pad_R, 4, wall_thickness);
+	App->physics->CreateThickerChain(0, 0, Pad_L, 4, wall_thickness, wall_restitution);
+	App->physics->CreateThickerChain(0, 0, Pad_R, 4, wall_thickness, wall_restitution);
 
 	//	Obstaculos superiores
 	App->physics->CreateBoxBody(ModulePhysics::P2M(204.0f), ModulePhysics::P2M(99.0f), ModulePhysics::P2M(18.0f), ModulePhysics::P2M(54.0f), false);
