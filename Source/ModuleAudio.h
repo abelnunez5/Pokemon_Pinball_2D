@@ -14,9 +14,9 @@ public:
 
 	bool Init();
 	bool CleanUp();
-	bool isMenuMusicPlaying;
-	bool isGameMusicPlaying;
-	bool isGameOverMusicPlaying;
+	bool isMenuMusicPlaying = false;
+	bool isGameMusicPlaying = false;
+	bool isGameOverMusicPlaying = false;
 
 	// Play a music file
 	bool PlayMusic(const char* path, float fade_time = DEFAULT_MUSIC_FADE_TIME);

@@ -26,6 +26,8 @@ bool ModuleAudio::Init()
 
     InitAudioDevice();
 
+	while(!IsAudioDeviceReady){}
+
 	return ret;
 }
 
