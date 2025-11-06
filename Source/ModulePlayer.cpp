@@ -84,7 +84,7 @@ update_status ModulePlayer::Update() {
         if (!IsKeyReleased(KEY_SPACE) || !IsKeyReleased(KEY_ENTER)) {
             if (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_ENTER)) {
                 App->gameStatus = Application::GameState::GAME;
-                lives = 1;
+                lives = 3;
             }
 
         }
@@ -188,7 +188,7 @@ update_status ModulePlayer::Update() {
         if (ball->GetPosition().y < 3)
             canPlunger = false;
 
-        if (ball->GetPosition().y > 18 && lives >= 0) {
+        if (ball->GetPosition().y > 18 && lives >= 1) {
 
             if (App->scene_intro->top_game_score < App->scene_intro->current_game_score)
                 App->scene_intro->top_game_score = App->scene_intro->current_game_score;
@@ -200,7 +200,7 @@ update_status ModulePlayer::Update() {
             lives--;
         }
 
-        if (lives == -1) {
+        if (lives == 0) {
             if (App->scene_intro->max_game_score < App->scene_intro->top_game_score)
                 App->scene_intro->max_game_score = App->scene_intro->top_game_score;
 
