@@ -24,6 +24,15 @@ public:
 	float pivotInsetL_texY = -2.0f; // Inserto pivote flippers en textura
 	float pivotInsetR_texY = -2.0f; // Inserto pivote flippers en textura
 
+	ModulePhysics::Gate plungerGate; // compuerta del plunger
+    bool gateCreated = false;
+    bool gateClosed = false;
+
+	float gateX = 437.0f; // posicion de la compuerta del plunger
+	float gateY = 110.0f; // posicion de la compuerta del plunger
+	float gateW = 6.0f;   // grosor de la pared (fina)  
+	float gateH = 60.0f;  // alto que cubra el hueco
+
     bool Start() override;
     update_status Update() override;
     void PlungerMovement(float dt);

@@ -40,6 +40,15 @@ bool ModulePlayer::Start() {
     TraceLog(LOG_INFO, "Right flipper: anchor=%p blade=%p joint=%p",
         (void*)rightFlipper.anchor, (void*)rightFlipper.blade, (void*)rightFlipper.joint); // que nos diga las posiciones de los flippers en consola
 
+    const float gateX = 437.0f; // posicion de la compuerta del plunger
+	const float gateY = 110.0f; // posicion de la compuerta del plunger
+    const float gateW = 6.0f;   // grosor de la pared (fina)
+    const float gateH = 60.0f;  // alto que cubra el hueco
+
+    plungerGate = App->physics->CreateGate(gateX, gateY, gateW, gateH); // empieza abierta (sensor=true)
+    gateCreated = true;
+    gateClosed = false;
+
 
     //Bola
     const float ballx = 10.2f;
@@ -126,7 +135,7 @@ update_status ModulePlayer::Update() {
 				App->renderer->Draw(tex, drawX, drawY, &src, angDeg, pivot_x, pivot_y, destW, destH); // Dibuja el flipper
             };
 
-                                                                // Llamadas:
+        // Llamadas:
 		drawFlipper(leftFlipper, texFlipperL, /*isLeft=*/true); // dibuja flipper izquierdo
 		drawFlipper(rightFlipper, texFlipperR, /*isLeft=*/false); // dibuja flipper derecho
 
@@ -147,6 +156,20 @@ update_status ModulePlayer::Update() {
         Draw(dt);
         break;
     }
+    }
+    // --- Control de compuerta del resorte ---
+    if (gateCreated && !gateClosed && ball)
+    {
+        const float bx = ModulePhysics::M2P(ball->GetPosition().x);
+        const float by = ModulePhysics::M2P(ball->GetPosition().y);
+		const b2Vec2 v = ball->GetLinearVelocity();
+
+		const float margin = 4.0f; // margen de seguridad en píxeles
+        
+        if (bx < gateX - margin && v.x < -0.5f) {// si la bola ha pasado la compuerta (y está por encima)
+            App->physics->SetGateClosed(plungerGate, true);
+            gateClosed = true;
+        }
     }
 
     
